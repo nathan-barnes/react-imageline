@@ -61,7 +61,7 @@ export default function FeedbackSlider(props) {
       <Typography id="input-slider" gutterBottom align="left" variant="caption">
         {label}
       </Typography>
-      <Grid container spacing={2} xs>
+      <Grid container spacing={2}>
         <Grid item>
           <TheIcon />
         </Grid>

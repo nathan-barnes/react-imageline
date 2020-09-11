@@ -77,7 +77,7 @@ export default function InputManager(props) {
           />
           <label htmlFor="raised-button-file">
             <Button
-              variant="raised"
+              variant="contained"
               component="span"
               className={classes.button}
             >
@@ -184,7 +184,7 @@ export default function InputManager(props) {
       <h2>This is where the inputs go</h2> */}
       <div>
         <Grid container spacing={1} direction="row-reverse">
-          <Grid item xs={0} sm={1} />
+          <Grid item xs={false} sm={1} />
           <Grid item xs={12} sm={7}>
             {/* viewer container */}
             <Card color="secondary">
@@ -200,13 +200,13 @@ export default function InputManager(props) {
           </Grid>
           <Grid item xs={12} sm={3}>
             <Paper color="secondary" variant="outlined">
-              <Typography gutterBottom="true" align="center">
+              <Typography gutterBottom align="center">
                 Zahner: ImageLines
               </Typography>
               <ControlledAccordions accordionGroups={accordionGroupTest} />
             </Paper>
           </Grid>
-          <Grid item xs={0} sm={1} />
+          <Grid item xs={false} sm={1} />
         </Grid>
       </div>
     </div>
