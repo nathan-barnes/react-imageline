@@ -19,3 +19,19 @@ export function HeightIcon(props) {
     </SvgIcon>
   );
 }
+
+export function BlankIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="" />
+    </SvgIcon>
+  );
+}
+
+export function AmplitudeIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M 0,12 C 0,12 5,32 12,12 18.75,-8.75 24,12 24,12" />
+    </SvgIcon>
+  );
+}

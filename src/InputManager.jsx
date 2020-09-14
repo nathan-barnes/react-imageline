@@ -15,9 +15,9 @@ import {
 import FeedbackSlider from "./FeedbackSlider";
 // import Delete from "@material-ui/icons/Delete";
 import FeedbackButtonToggle from "./FeedbackButtonToggle";
-import { WidthIcon, HeightIcon } from "./DimIcons";
+import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
 import ControlledAccordions from "./ControlledAccordions";
-// import FormatLineSpacing from "@material-ui/icons/FormatLineSpacing";
+
 import Waves from "@material-ui/icons/Waves";
 import GraphicEq from "@material-ui/icons/GraphicEq";
 import RotateRightIcon from "@material-ui/icons/RotateRight";
@@ -93,14 +93,14 @@ export default function InputManager(props) {
     const idValuePairs = paramData
       .filter((p) => paramNames.includes(p.name))
       .reduce((vals, p) => ({ ...vals, [p.id]: p.value }), {});
-    console.log("idValuePairs", idValuePairs);
+    // console.log("idValuePairs", idValuePairs);
     //set paired id's and values to params
     setParams(idValuePairs);
 
     const paramIdPaired = paramData
       .filter((p) => paramNames.includes(p.name))
       .reduce((vals, p) => ({ ...vals, [p.name]: p.id }), {});
-    console.log("paramIdPaired: ", paramIdPaired);
+    // console.log("paramIdPaired: ", paramIdPaired);
     setParamIds(paramIdPaired);
   }, []);
 
@@ -117,8 +117,13 @@ export default function InputManager(props) {
     // console.log(
     //   `you want to set param id ${paramId} of type ${type} to ${value}`
     // );
-
-    setParams((prev) => ({ ...prev, [paramId]: value }));
+    if (!value.target === null) {
+      console.log("value: ", value);
+      //   setParams((prev) => ({
+      //     ...prev,
+      //     [value.target.pId]: value.target.value,
+      //   }));
+    } else setParams((prev) => ({ ...prev, [paramId]: value }));
     // console.log("params after update: ", params);
 
     // call a single function that updates the single param in an array of params
@@ -178,14 +183,11 @@ export default function InputManager(props) {
       subHeading: "filename and/or preview",
       children: (
         <div>
-          This is where the image interface goes
-          {/* Display the active params (names and values?) here, to show that they are being passed up and down correctly
-          derive from the id/value list (?) or make a separate one that's called by a placeholder function call to sdapi?  */}
-          {/* need a image selector for this area, maybe something with a slideshow of thumbnails to select from 
+          {/* goal: add image selector for this area, maybe something with a slideshow of thumbnails to select from 
           image needs to be checked for size (less than ?? check Shapediver docs)
           need to figure out how/where to store the image.  What happens to it once selected? Is it assigned to a variable?
           */}
-          <p />
+          {/* move this to a custom component - UploadButton, manage state there */}
           <input
             accept="image/*"
             className={classes.input}
@@ -193,6 +195,9 @@ export default function InputManager(props) {
             id="raised-button-file"
             multiple={false}
             type="file"
+            onChange={updateParams}
+            pid={paramIds["ImageInput"]}
+            value={params[paramIds["ImageInput"]] || ""}
             //need to get this to use same updateParam function to update the value of the filename in the params
           />
           {/* conditional inclusion - if upload in params, generate UpdateButton component 
@@ -209,7 +214,7 @@ export default function InputManager(props) {
           <p />
           <FeedbackButtonToggle //Replace with Checkbox
             option1="Invert"
-            option2="No Invert"
+            option2="Original"
             {...getProps("InvertSampling")}
           />
           <p />
@@ -226,25 +231,20 @@ export default function InputManager(props) {
       heading: "Lines",
       subHeading:
         params[paramIds["LINES/WAVES PER FT"]] +
-        (params[paramIds["LINES/WAVES"]] ? " Line" : " Curve") +
-        "s per ft, " +
+        (params[paramIds["LINES/WAVES"]] ? " Line" : " Wave") +
+        "s/ft, " +
         params[paramIds["PERF PER FT OF LINES/WAVES"]] +
-        " Max Perf per ft of" +
-        (params[paramIds["LINES/WAVES"]] ? " Line" : " Curve"),
+        " Max Perf/ft @ " +
+        params[paramIds["ROTATE LINES/WAVES"]] +
+        " deg",
       children: (
         <div>
           {/* Goal: change so init values come from paramData
             maybe: generate a inputProps param that is generic, then add it to the list of unique params */}
-          <FeedbackButtonToggle
-            option1="Lines"
-            option2="Curves"
-            {...getProps("LINES/WAVES")}
-          />
-          <p />
+
           <FeedbackSlider
             label={
-              (params[paramIds["LINES/WAVES"]] ? " Line" : " Curve") +
-              "s per ft"
+              (params[paramIds["LINES/WAVES"]] ? " Line" : " Wave") + "s/ft"
             }
             // min={4}
             // max={10}
@@ -254,10 +254,7 @@ export default function InputManager(props) {
           />
           <p />
           <FeedbackSlider
-            label={
-              "Max Perf per ft of" +
-              (params[paramIds["LINES/WAVES"]] ? " Line" : " Curve")
-            }
+            label={"Max Perf/ft"}
             // min={6}
             // max={20}
             // defValue={12}
@@ -266,11 +263,29 @@ export default function InputManager(props) {
           />
           <p />
           <FeedbackSlider
-            label={
-              "Rotated " + params[paramIds["ROTATE LINES/WAVES"]] + " degrees"
-            }
+            label={"Rotation (degrees)"}
             {...getProps("ROTATE LINES/WAVES")}
             icon={RotateRightIcon}
+          />
+          <p />
+          <FeedbackButtonToggle
+            option1="Lines"
+            option2="Waves"
+            {...getProps("LINES/WAVES")}
+          />
+          <p />
+          <FeedbackSlider
+            label={"Max Amplitude (1-10)"}
+            {...getProps("WAVES: MAX AMPLITUDE")}
+            icon={AmplitudeIcon} //replace - look for sound related amplitude
+            disabled={params[paramIds["LINES/WAVES"]] ? true : false}
+          />
+          <p />
+          <FeedbackSlider
+            label={"Wave Seed"}
+            {...getProps("WAVES: SEED")}
+            // icon={BlankIcon} //replace - look for sound related amplitude
+            disabled={params[paramIds["LINES/WAVES"]] ? true : false}
           />
         </div>
       ),
@@ -344,17 +359,22 @@ export default function InputManager(props) {
             {/* viewer container */}
             <Card color="secondary">
               <CardHeader title="This is where the viewer goes"></CardHeader>
-              <CardMedia
+              {/* <CardMedia
                 className={classes.media}
                 component="img"
                 height="220"
                 image="../src/LWC_ScreenCap.png" //this isn't working and I don't know how to fix it
                 title="Standin for Viewer"
-              />
+              /> */}
               <CardContent>
-                <Typography>
-                  {/* want to put feedbak params here to see */}
-                </Typography>
+                {/* <Typography> */}
+                {Object.keys(paramIds).map((param, idx) => (
+                  <p key={idx}>
+                    {idx}: {param} = {params[paramIds[param]].toString()}
+                  </p>
+                ))}
+                {/* want to put feedbak params here to see */}
+                {/* </Typography> */}
               </CardContent>
             </Card>
           </Grid>

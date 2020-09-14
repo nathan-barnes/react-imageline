@@ -1,6 +1,5 @@
 import React from "react";
 import InputManager from "./InputManager";
-import data from "./ImageLinesParams.json";
 
 // import Typography from "@material-ui/core/Typography";
 // import Link from "@material-ui/core/Link";
@@ -50,14 +49,6 @@ const App = () => {
     </div>
   );
 };
-
-// const arr = JSON.parse(JSON.stringify(data));
-
-// for (const element of arr) console.log(element);
-console.log(data);
-
-// console.log(typeof JSON.parse(JSON.stringify(data)));
-// const arr = JSON.parse(data);
 
 export default App;
 

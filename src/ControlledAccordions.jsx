@@ -5,7 +5,7 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { ListSubheader } from "@material-ui/core";
+// import { ListSubheader } from "@material-ui/core";
 
 //ToDo: Change subHeader to the settings of the nested values -
 // the contents should be composed to return a string as well as an array of the components inside
