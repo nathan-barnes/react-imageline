@@ -21,7 +21,7 @@ const useStyles = makeStyles({
  * goal: add default icon or blank
  */
 export default function FeedbackSlider(props) {
-  const { label } = props;
+  const { label, pId } = props;
   const min = props.min || 0;
   const max = props.max || min + 10;
   const step = props.step || 1;
@@ -33,26 +33,25 @@ export default function FeedbackSlider(props) {
   //this is difference between Feedback version and regular version.
   // const [value, setValue] = React.useState(defValue);
   const { value, setValue } = props;
-
-  // This doesn't work b/c React Hooks cannot be called conditionally
-  // const [value, setValue] =
-  //   props.value && props.setValue
-  //     ? [props.value, props.setValue]
-  //     : React.useState(defValue);
+  const type = "range";
 
   const handleSliderChange = (event, newValue) => {
-    setValue(newValue);
+    setValue(newValue, pId, type);
   };
 
   const handleInputChange = (event) => {
-    setValue(event.target.value === "" ? "" : Number(event.target.value));
+    setValue(
+      event.target.value === "" ? "" : Number(event.target.value),
+      pId,
+      type
+    );
   };
 
   const handleBlur = () => {
     if (value < min) {
-      setValue(min);
+      setValue(min, pId, type);
     } else if (value > max) {
-      setValue(max);
+      setValue(max, pId, type);
     }
   };
 
@@ -71,6 +70,7 @@ export default function FeedbackSlider(props) {
             min={min}
             max={max}
             value={typeof value === "number" ? value : 0}
+            // value={value}
             // defaultValue={defValue}
             onChange={handleSliderChange}
             aria-labelledby="input-slider"
@@ -79,7 +79,7 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <Input
             className={classes.input}
-            value={value}
+            value={value || ""}
             margin="dense"
             onChange={handleInputChange}
             onBlur={handleBlur}
@@ -87,7 +87,6 @@ export default function FeedbackSlider(props) {
               step: step,
               min: min,
               max: max,
-              // defaultValue: defValue,
               type: "number",
               "aria-labelledby": "input-slider",
             }}
