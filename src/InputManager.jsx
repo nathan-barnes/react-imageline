@@ -1,14 +1,17 @@
 import React from "react";
-import { useState, useCallback } from "react";
+import {
+  useState,
+  // useCallback
+} from "react";
 import {
   //   Button,
   Grid,
   Paper,
   Typography,
-  Card,
-  CardHeader,
+  // Card,
+  // CardHeader,
   //   CardMedia,
-  CardContent,
+  // CardContent,
   // Select,
 } from "@material-ui/core";
 
@@ -56,15 +59,11 @@ export default function InputManager(props) {
 
   const [bool1, setBool1] = useState(true);
 
-  // for use with FeedbackButton
-  //   const handleChange2 = (event) => {
-  //     setInput1(input1 + 1);
-  //   };
   // const [params, setParams] = useState({});
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
-  const { params, paramData, updateParams } = props;
+  const { params, paramData, updateParams, updateParamNoSD } = props;
 
   // console.log(
   //   `From parent: \nparams: ${params}\n\nparamData: ${paramData}\n\nupdateParams: ${updateParams}`
@@ -150,6 +149,7 @@ export default function InputManager(props) {
 
     let defaultParams = {
       setValue: updateParams,
+      setDragValue: updateParamNoSD,
       pId: paramIds[paramName],
       value: params[paramIds[paramName]],
       defVal: thisParamData.defVal,

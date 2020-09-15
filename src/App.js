@@ -1,5 +1,5 @@
 import React from "react";
-import InputManager from "./InputManager";
+// import InputManager from "./InputManager";
 import ShapeDiverLoad from "./ShapeDiverLoad";
 
 const TICKET_ID =
@@ -20,7 +20,7 @@ const App = () => {
     <div>
       {/* <ShapeDiverLoad ticket={TICKET_ID} /> */}
       {/* <InputManager ticket={TICKET_ID} /> */}
-      <ShapeDiverLoad ticket={TICKET_ID} />
+      <ShapeDiverLoad ticket={TICKET_ID} liveLink={true} />
     </div>
   );
 };
