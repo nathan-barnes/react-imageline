@@ -1,19 +1,20 @@
 import React from "react";
 import { useState, useCallback } from "react";
 import {
-  Button,
+  //   Button,
   Grid,
   Paper,
   Typography,
   Card,
   CardHeader,
-  CardMedia,
+  //   CardMedia,
   CardContent,
+  // Select,
 } from "@material-ui/core";
-// import InputSlider from "./InputSlider";
+
 // import FeedbackButton from "./FeedbackButton";
 import FeedbackSlider from "./FeedbackSlider";
-// import Delete from "@material-ui/icons/Delete";
+
 import FeedbackButtonToggle from "./FeedbackButtonToggle";
 import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
 import ControlledAccordions from "./ControlledAccordions";
@@ -26,7 +27,11 @@ import { makeStyles } from "@material-ui/styles";
 import { useEffect } from "react";
 
 import paramData from "./ImageLinesParams";
+import FeedbackImageUpload from "./FeedbackImageUpload";
+import FeedbackSelect from "./FeedbackSelect";
 //replace this with call to SDApi when adding volatile data
+
+// import theme from "./MuiTheme";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -76,6 +81,7 @@ export default function InputManager(props) {
     "WAVE DRIVERS-HIDE/SHOW",
     "WAVES: MAX AMPLITUDE",
     "WAVES: SEED",
+    "Num.Stroke%ofMax",
   ];
 
   //Then search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
@@ -117,12 +123,10 @@ export default function InputManager(props) {
     // console.log(
     //   `you want to set param id ${paramId} of type ${type} to ${value}`
     // );
-    if (!value.target === null) {
-      console.log("value: ", value);
-      //   setParams((prev) => ({
-      //     ...prev,
-      //     [value.target.pId]: value.target.value,
-      //   }));
+    if (type === "file") {
+      //When implementing with SD, the file needs to be passed, not the name
+      console.log(value, "\n", value.name);
+      setParams((prev) => ({ ...prev, [paramId]: value.name }));
     } else setParams((prev) => ({ ...prev, [paramId]: value }));
     // console.log("params after update: ", params);
 
@@ -132,10 +136,10 @@ export default function InputManager(props) {
     // goal: display SD params array in the dummy viewer to show that it has updated in sibling (viewer)
   });
 
-  //problem - this is called every time the component renders.  Should only be called once to initialize, not get triggered on each update.
+  //problem(?) - this is called every time the component renders.  Should only be called once to initialize, not get triggered on each update.
   const getProps = (paramName) => {
     // for a given name, return a generic list of props for that component:
-    // min, max, defValue, updateParams, value, pId
+
     const thisParamData = paramData.filter((p) => p.name === paramName)[0];
     // if (thisParamData) console.log("found: ", thisParamData);
 
@@ -143,9 +147,10 @@ export default function InputManager(props) {
       setValue: updateParams,
       pId: paramIds[paramName],
       value: params[paramIds[paramName]],
+      defVal: thisParamData.defVal,
     };
     if (["Odd", "Even", "Int", "Float"].includes(thisParamData.type)) {
-      let step =
+      const step =
         thisParamData.type === "Int"
           ? 1
           : thisParamData.type === "Even " || thisParamData.type === "Odd"
@@ -159,19 +164,19 @@ export default function InputManager(props) {
         step: step,
       };
       //   console.log("range defaults: ", defaultParams);
-    }
+      // }
 
-    //   // } else if (thisParamData.type === "checkbox") {
-    //   //   if (thisParamData.value) {
-    //   // defaultParams.checked = thisParamData.value;
-    //   //   }
-    // } else if (thisParamData.type === "select") {
-    //   defaultParams.children = thisParamData.choices.map((choice, idx) => (
-    //     <option key={choice} value={idx}>
-    //       {choice}
-    //     </option>
-    //   ));
-    // }
+      //   // } else if (thisParamData.type === "checkbox") {
+      //   //   if (thisParamData.value) {
+      //   // defaultParams.checked = thisParamData.value;
+      //   //   }
+    } else if (thisParamData.type === "StringList") {
+      defaultParams.children = thisParamData.choices.map((choice, idx) => (
+        <option key={choice} value={idx}>
+          {choice}
+        </option>
+      ));
+    }
     // //if range, add other values from default props.
 
     return defaultParams;
@@ -180,37 +185,18 @@ export default function InputManager(props) {
   const accordionGroupTest = [
     {
       heading: "Image",
-      subHeading: "filename and/or preview",
+      subHeading:
+        (params[paramIds["ImageInput"]] || "Upload an Image") +
+        ` / ${params[paramIds["InvertSampling"]] ? "Inverted" : "Original"} / ${
+          params[paramIds["IsStretched"]] ? "Stretched" : "Cropped"
+        }`,
       children: (
         <div>
           {/* goal: add image selector for this area, maybe something with a slideshow of thumbnails to select from 
           image needs to be checked for size (less than ?? check Shapediver docs)
           need to figure out how/where to store the image.  What happens to it once selected? Is it assigned to a variable?
           */}
-          {/* move this to a custom component - UploadButton, manage state there */}
-          <input
-            accept="image/*"
-            className={classes.input}
-            style={{ display: "none" }}
-            id="raised-button-file"
-            multiple={false}
-            type="file"
-            onChange={updateParams}
-            pid={paramIds["ImageInput"]}
-            value={params[paramIds["ImageInput"]] || ""}
-            //need to get this to use same updateParam function to update the value of the filename in the params
-          />
-          {/* conditional inclusion - if upload in params, generate UpdateButton component 
-          or, default behavior that returns an error when used*/}
-          <label htmlFor="raised-button-file">
-            <Button
-              variant="contained"
-              component="span"
-              className={classes.button}
-            >
-              Upload Image
-            </Button>
-          </label>
+          <FeedbackImageUpload {...getProps("ImageInput")} />
           <p />
           <FeedbackButtonToggle //Replace with Checkbox
             option1="Invert"
@@ -219,8 +205,8 @@ export default function InputManager(props) {
           />
           <p />
           <FeedbackButtonToggle
-            option1="Crop"
-            option2="Stretch"
+            option1="Stretch"
+            option2="Crop"
             {...getProps("IsStretched")}
           />
         </div>
@@ -246,18 +232,12 @@ export default function InputManager(props) {
             label={
               (params[paramIds["LINES/WAVES"]] ? " Line" : " Wave") + "s/ft"
             }
-            // min={4}
-            // max={10}
-            // defValue={6}
             icon={Waves}
             {...getProps("LINES/WAVES PER FT")}
           />
           <p />
           <FeedbackSlider
             label={"Max Perf/ft"}
-            // min={6}
-            // max={20}
-            // defValue={12}
             {...getProps("PERF PER FT OF LINES/WAVES")}
             icon={GraphicEq}
           />
@@ -266,6 +246,14 @@ export default function InputManager(props) {
             label={"Rotation (degrees)"}
             {...getProps("ROTATE LINES/WAVES")}
             icon={RotateRightIcon}
+          />
+          <p />
+          {/* Add line thickness slider 
+          "Num.Stroke%ofMax"*/}
+          <FeedbackSlider
+            label={"Stroke Thickness"}
+            {...getProps("Num.Stroke%ofMax")}
+            // icon={RotateRightIcon}
           />
           <p />
           <FeedbackButtonToggle
@@ -282,7 +270,7 @@ export default function InputManager(props) {
           />
           <p />
           <FeedbackSlider
-            label={"Wave Seed"}
+            label={"Random Wave Seed"}
             {...getProps("WAVES: SEED")}
             // icon={BlankIcon} //replace - look for sound related amplitude
             disabled={params[paramIds["LINES/WAVES"]] ? true : false}
@@ -303,9 +291,6 @@ export default function InputManager(props) {
           <FeedbackSlider
             // key="Width"
             label="Width"
-            // min={2}
-            // max={20}
-            // defValue={input1}
             {...getProps("Scope Width")}
             icon={WidthIcon}
           />
@@ -313,9 +298,6 @@ export default function InputManager(props) {
           <FeedbackSlider
             // key="Height"
             label="Height"
-            // min={6}
-            // max={20}
-            // defValue={input2}
             {...getProps("Scope Height")}
             icon={HeightIcon}
           />
@@ -332,8 +314,22 @@ export default function InputManager(props) {
     },
     {
       heading: "Material",
-      subHeading: "Pick Material and Finish",
-      children: <div>Material Selection here</div>,
+      subHeading:
+        // "Pick Material and Finish" +
+        paramData.filter((p) => p.name === "MATERIAL")[0].choices[
+          params[paramIds["MATERIAL"]]
+        ],
+      children: (
+        <div>
+          {/* <label htmlFor="materials">Select Material </label>
+          <select id="materials" {...getProps("MATERIAL")}></select>
+          <p /> */}
+          <FeedbackSelect
+            name="Select Material and Finish"
+            {...getProps("MATERIAL")}
+          />
+        </div>
+      ),
     },
     // goal: Add two different methods of selection from list: with swatches of different materials/colors, and using dropdown method
   ];
@@ -368,12 +364,12 @@ export default function InputManager(props) {
               /> */}
               <CardContent>
                 {/* <Typography> */}
+                {/* feedback params here to check that updates are happening */}
                 {Object.keys(paramIds).map((param, idx) => (
                   <p key={idx}>
                     {idx}: {param} = {params[paramIds[param]].toString()}
                   </p>
                 ))}
-                {/* want to put feedbak params here to see */}
                 {/* </Typography> */}
               </CardContent>
             </Card>
@@ -381,6 +377,7 @@ export default function InputManager(props) {
           <Grid item xs={12} sm={10} md={3}>
             <Paper color="secondary" variant="outlined">
               <Typography gutterBottom align="center">
+                {/* goal: replace with image for branding or just Zahner logo */}
                 Zahner: ImageLines
               </Typography>
               <ControlledAccordions accordionGroups={accordionGroupTest} />

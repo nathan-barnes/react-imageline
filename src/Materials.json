@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Hunter Zinc",
+    "metal": "Zinc",
+    "imageUrl": "https://imagewall.imgix.net/f2706be3-fa4a-4dc0-8cb9-8f190119ab9a%2Fhunter_zinc-tileable.jpg?w=256&q=60",
+    "flavorText": "One of many custom patinas in development at Zahner, the first large-scale project to use the surface was the eponymous Hunter Museum in Chattanooga, TN for Architect Randall Stout Architects. The same patina was used on the Art Gallery of Alberta in Edmonton, Canada.",
+    "link": "https://www.azahner.com/materials/hunter-zinc/"
+  },
+  {
+    "name": "Preweathered Zinc",
+    "metal": "Zinc",
+    "imageUrl": "https://imagewall.imgix.net/fa45838a-5780-4d14-bfce-280d07079b23%2Fpreweathered_zinc-tileable.png?w=256&q=60",
+    "flavorText": "",
+    "link": ""
+  },
+  {
+    "name": "Baroque Zinc",
+    "metal": "Zinc",
+    "imageUrl": "https://imagewall.imgix.net/a6934eb5-51a1-41ba-a500-bc789e88be72%2Fbaroque_zinc-tileable.jpg?w=256&q=60",
+    "flavorText": "Baroque Zinc is a lead-free, preweathered patina on zinc sheet metal. Baroque Zinc is a reference to the historic detail used to produce exuberance, drama and grandeur. The sophisticated patina evokes the artistic styles of centuries past. Like the art and architecture from the historic period, zinc is an expressive material which conveys an emotive response.",
+    "link": "https://www.azahner.com/materials/baroque-zinc/"
+  },
+  {
+    "name": "Roano Zinc",
+    "metal": "Zinc",
+    "imageUrl": "https://imagewall.imgix.net/86504c74-5d0e-4743-aaa8-fa773d21d4d6%2Froano_zinc-tileable.jpg?w=256&q=60",
+    "flavorText": "Roano Zinc is a lead-free, preweathered patina on zinc sheet metal, a proprietary, enduring finish developed by Zahner. The sophisticated material is part of Zahner’s line of raw patinated products, which are designed to age like tanned leather or vintage wine.",
+    "link": "https://www.azahner.com/materials/roano-zinc/"
+  },
+  {
+    "name": "Solanum Steel",
+    "metal": "Steel",
+    "imageUrl": "https://imagewall.imgix.net/cd8a42ca-4eee-4331-b803-031d9a6e18a9/solanum-tileable.png?w=256&q=60",
+    "flavorText": "One of the well recognized challenges of using steel in architecture is its propensity for the material to rust or oxidize. Although there are many who appreciate the visual nature of the warm hues of weathering steel, nobody likes it when the material’s color bleeds onto other surfaces. The Zahner preweathered steel process reduces the material’s tendency to stain adjacent surfaces.",
+    "link": "https://www.azahner.com/materials/solanum-steel/"
+  },
+  {
+    "name": "AngelHair Stainless Steel",
+    "metal": "Steel",
+    "imageUrl": "https://imagewall.imgix.net/8216d49b-abaa-4bdc-ae22-566c0fc91d48%2Fangelhair-tileable.png?w=256&q=60",
+    "flavorText": "Angel Hair is a Zahner material process developed to soften the high-reflectivity of standard grain finishes. The patented process uses precision-controlled machinery to etch stainless steel with a fine grain. Available on a variety of metal alloys, this is the finest, smoothest, and most uniform light-diffusion metal surface available for architectural metal.",
+    "link": "https://www.azahner.com/materials/angel-hair/"
+  },
+  {
+    "name": "GlassBead Stainless Steel",
+    "metal": "Steel",
+    "imageUrl": "https://imagewall.imgix.net/85557a6b-2357-4b73-8be1-fabe55472cb8%2Fglassbead-tileable.png?w=256&q=60",
+    "flavorText": "GB-60 refers to a custom Zahner-developed mechanical finish for metal which a diffused non-directional finish. The finish can be used on stainless steel, aluminum, copper, light interference stainless steel and more.",
+    "link": "https://www.azahner.com/materials/gb-60/"
+  },
+  {
+    "name": "Mirror Stainless Steel",
+    "metal": "Steel",
+    "imageUrl": "https://imagewall.imgix.net/f7e62c65-883f-44fe-9a97-d0e66f1ba673%2Fmirror-tileable.png?w=256&q=60",
+    "flavorText": "",
+    "link": ""
+  },
+  {
+    "name": "Dirty Penny Copper",
+    "metal": "Copper",
+    "imageUrl": "https://imagewall.imgix.net/e59fc9c2-f04b-4143-88de-615db226ae77/dirty_penny-tileable-jpg.png?w=256&q=60",
+    "flavorText": "Dirty Penny copper is a premium surface developed by Zahner to provide artists and architects with a stunning architectural surface unlike any other. The preweathered copper features light and dark tones ranging from blues to greens and reds.\nAn iridescent surface, the material benefits from a microfilm which develops on the exterior layer of the material. The oxidized layer is like a living protecting barrier which grows and evolves as it further oxidizes.",
+    "link": "https://www.azahner.com/materials/dirty-penny-copper/"
+  },
+  {
+    "name": "Star Blue Copper",
+    "metal": "Copper",
+    "imageUrl": "https://imagewall.imgix.net/f568deb0-f608-42b5-b701-0bf2fa833e22/star_blue-tileable.jpg?w=256&q=60",
+    "flavorText": "Zahner began working with copper patination when the company was formed in the late nineteenth century. To get the aged copper look of ancient domes requires entire centuries of weathering in conditions that are neither too dry nor too humid. Zahner uses a technique that speeds up this process.",
+    "link": "https://www.azahner.com/materials/star-blue-copper/"
+  }
+]

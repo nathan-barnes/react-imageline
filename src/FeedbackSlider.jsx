@@ -9,8 +9,9 @@ import { SvgIcon } from "@material-ui/core";
 const useStyles = makeStyles({
   // This is probably why the RWD isn't working - it overrides the RWD behavior (?)
   root: {
-    width: 250,
+    // width: 250,
     // flexBasis: "75%",
+    flex: "auto",
   },
   input: {
     width: 50,
@@ -36,7 +37,7 @@ export default function FeedbackSlider(props) {
   const min = props.min || 0;
   const max = props.max || min + 10;
   const step = props.step || 1;
-  // const defValue = props.defValue || min;
+  const defValue = props.defVal || min;
   const TheIcon = props.icon || BlankIcon;
   const disabled = props.disabled || false;
 
@@ -81,7 +82,7 @@ export default function FeedbackSlider(props) {
             step={step}
             min={min}
             max={max}
-            value={typeof value === "number" ? value : 0}
+            value={(typeof value === "number" ? value : 0) || defValue}
             // defaultValue={defValue}
             onChange={handleSliderChange}
             aria-labelledby="input-slider"
@@ -91,7 +92,7 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <Input
             className={classes.input}
-            value={value || ""}
+            value={value || defValue}
             margin="dense"
             onChange={handleInputChange}
             onBlur={handleBlur}

@@ -1,7 +1,17 @@
 import React from "react";
 import { ButtonGroup, Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+
+// const useStyles = makeStyles(() => ({
+//   root: {
+//     flexGrow: 5,
+//     flexBasis: 250,
+//   },
+// }));
 
 export default function FeedbackButtonToggle(props) {
+  // const classes = useStyles();
+
   const type = "bool";
   const { option1, option2, pId } = props;
 
@@ -17,7 +27,10 @@ export default function FeedbackButtonToggle(props) {
   };
 
   return (
-    <ButtonGroup variant="contained">
+    <ButtonGroup
+      variant="contained"
+      // className="root"
+    >
       <Button
         id="One"
         onClick={!value ? handleToggle : () => {}}
