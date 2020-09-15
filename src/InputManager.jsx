@@ -26,7 +26,7 @@ import RotateRightIcon from "@material-ui/icons/RotateRight";
 import { makeStyles } from "@material-ui/styles";
 import { useEffect } from "react";
 
-import paramData from "./ImageLinesParams";
+// import paramData from "./ImageLinesParams";
 import FeedbackImageUpload from "./FeedbackImageUpload";
 import FeedbackSelect from "./FeedbackSelect";
 //replace this with call to SDApi when adding volatile data
@@ -60,8 +60,15 @@ export default function InputManager(props) {
   //   const handleChange2 = (event) => {
   //     setInput1(input1 + 1);
   //   };
-  const [params, setParams] = useState({});
-  const [paramIds, setParamIds] = useState({});
+  // const [params, setParams] = useState({});
+  const [paramIds, setParamIds] = useState({}); //replace with useRef()?
+
+  // Adding SD link:
+  const { params, paramData, updateParams } = props;
+
+  // console.log(
+  //   `From parent: \nparams: ${params}\n\nparamData: ${paramData}\n\nupdateParams: ${updateParams}`
+  // );
 
   //then collect params and set to current
 
@@ -69,8 +76,8 @@ export default function InputManager(props) {
   const paramNames = [
     "Scope Width",
     "Scope Height",
-    "InvertSampling",
-    "IsStretched",
+    "Bool.InvertSampling",
+    "Bool.IsStretched",
     "MATERIAL",
     "ImageInput",
     "LINES/WAVES",
@@ -96,12 +103,12 @@ export default function InputManager(props) {
     // This is probably where the SDApi gets called to generate the param list, maybe also to initialize the viewer (?)
 
     // Generate a list of ids paired with values, this is what actually gets updated
-    const idValuePairs = paramData
-      .filter((p) => paramNames.includes(p.name))
-      .reduce((vals, p) => ({ ...vals, [p.id]: p.value }), {});
-    // console.log("idValuePairs", idValuePairs);
-    //set paired id's and values to params
-    setParams(idValuePairs);
+    // const idValuePairs = paramData
+    //   .filter((p) => paramNames.includes(p.name))
+    //   .reduce((vals, p) => ({ ...vals, [p.id]: p.value }), {});
+    // // console.log("idValuePairs", idValuePairs);
+    // //set paired id's and values to params
+    // setParams(idValuePairs);
 
     const paramIdPaired = paramData
       .filter((p) => paramNames.includes(p.name))
@@ -110,37 +117,35 @@ export default function InputManager(props) {
     setParamIds(paramIdPaired);
   }, []);
 
-  // maintain Line/Curve text as state of a variable that is calculated once, instead of the repeated call to the array to get the value?
-  useEffect(() => {});
-
   // Generate a list of the params themselves for reference? or don't, since they can still be referenced by id, might violate DRY principle
   // Change this so it only updates if the values change - useCallback?
 
   // How do i make a generic function which updates a variable?  That is how the one that benj made works, with "Update Param".
   // That one gathers all the params and does an update on all of them, along with the specific one.
   // Then, somehow, that list of params gets updated as the current values.
-  const updateParams = useCallback((value, paramId, type) => {
-    // console.log(
-    //   `you want to set param id ${paramId} of type ${type} to ${value}`
-    // );
-    if (type === "file") {
-      //When implementing with SD, the file needs to be passed, not the name
-      console.log(value, "\n", value.name);
-      setParams((prev) => ({ ...prev, [paramId]: value.name }));
-    } else setParams((prev) => ({ ...prev, [paramId]: value }));
-    // console.log("params after update: ", params);
+  // const updateParams = useCallback((value, paramId, type) => {
+  //   // console.log(
+  //   //   `you want to set param id ${paramId} of type ${type} to ${value}`
+  //   // );
+  //   if (type === "file") {
+  //     //When implementing with SD, the file needs to be passed, not the name
+  //     console.log(value, "\n", value.name);
+  //     setParams((prev) => ({ ...prev, [paramId]: value.name }));
+  //   } else setParams((prev) => ({ ...prev, [paramId]: value }));
 
-    // call a single function that updates the single param in an array of params
-    // call to SD update
-    // goal: make a dummy SD update function
-    // goal: display SD params array in the dummy viewer to show that it has updated in sibling (viewer)
-  });
+  //   // call a single function that updates the single param in an array of params
+  //   // call to SD update
+  //   // goal: make a dummy SD update function
+  //   // goal: display SD params array in the dummy viewer to show that it has updated in sibling (viewer)
+  // });
 
   //problem(?) - this is called every time the component renders.  Should only be called once to initialize, not get triggered on each update.
   const getProps = (paramName) => {
     // for a given name, return a generic list of props for that component:
 
-    const thisParamData = paramData.filter((p) => p.name === paramName)[0];
+    const thisParamData = paramData
+      ? paramData.filter((p) => p.name === paramName)[0]
+      : [];
     // if (thisParamData) console.log("found: ", thisParamData);
 
     let defaultParams = {
@@ -187,9 +192,9 @@ export default function InputManager(props) {
       heading: "Image",
       subHeading:
         (params[paramIds["ImageInput"]] || "Upload an Image") +
-        ` / ${params[paramIds["InvertSampling"]] ? "Inverted" : "Original"} / ${
-          params[paramIds["IsStretched"]] ? "Stretched" : "Cropped"
-        }`,
+        ` / ${
+          params[paramIds["Bool.InvertSampling"]] ? "Inverted" : "Original"
+        } / ${params[paramIds["Bool.IsStretched"]] ? "Stretched" : "Cropped"}`,
       children: (
         <div>
           {/* goal: add image selector for this area, maybe something with a slideshow of thumbnails to select from 
@@ -201,13 +206,13 @@ export default function InputManager(props) {
           <FeedbackButtonToggle //Replace with Checkbox
             option1="Invert"
             option2="Original"
-            {...getProps("InvertSampling")}
+            {...getProps("Bool.InvertSampling")}
           />
           <p />
           <FeedbackButtonToggle
             option1="Stretch"
             option2="Crop"
-            {...getProps("IsStretched")}
+            {...getProps("Bool.IsStretched")}
           />
         </div>
       ),
@@ -217,7 +222,7 @@ export default function InputManager(props) {
       heading: "Lines",
       subHeading:
         params[paramIds["LINES/WAVES PER FT"]] +
-        (params[paramIds["LINES/WAVES"]] ? " Line" : " Wave") +
+        (params[paramIds["LINES/WAVES"]] ? " Wave" : " Line") +
         "s/ft, " +
         params[paramIds["PERF PER FT OF LINES/WAVES"]] +
         " Max Perf/ft @ " +
@@ -230,7 +235,7 @@ export default function InputManager(props) {
 
           <FeedbackSlider
             label={
-              (params[paramIds["LINES/WAVES"]] ? " Line" : " Wave") + "s/ft"
+              (params[paramIds["LINES/WAVES"]] ? " Wave" : " Line") + "s/ft"
             }
             icon={Waves}
             {...getProps("LINES/WAVES PER FT")}
@@ -257,8 +262,8 @@ export default function InputManager(props) {
           />
           <p />
           <FeedbackButtonToggle
-            option1="Lines"
-            option2="Waves"
+            option1="Waves"
+            option2="Lines"
             {...getProps("LINES/WAVES")}
           />
           <p />
@@ -266,14 +271,14 @@ export default function InputManager(props) {
             label={"Max Amplitude (1-10)"}
             {...getProps("WAVES: MAX AMPLITUDE")}
             icon={AmplitudeIcon} //replace - look for sound related amplitude
-            disabled={params[paramIds["LINES/WAVES"]] ? true : false}
+            disabled={params[paramIds["LINES/WAVES"]] ? false : true}
           />
           <p />
           <FeedbackSlider
             label={"Random Wave Seed"}
             {...getProps("WAVES: SEED")}
             // icon={BlankIcon} //replace - look for sound related amplitude
-            disabled={params[paramIds["LINES/WAVES"]] ? true : false}
+            disabled={params[paramIds["LINES/WAVES"]] ? false : true}
           />
         </div>
       ),
@@ -336,12 +341,6 @@ export default function InputManager(props) {
 
   return (
     <div>
-      {/* <h1>This is the input report</h1>
-      <h2>input1: {input1}</h2>
-      <h2>input2: {input2}</h2>
-      <h2>bool1: {bool1.toString()}</h2>
-      <hr />
-      <h2>This is where the inputs go</h2> */}
       <div>
         <Grid
           container
@@ -350,31 +349,35 @@ export default function InputManager(props) {
           alignContent="center"
         >
           {/* The grid values need tweaking!!! */}
-          <Grid item sm={false} md={1} />
-          <Grid item xs={12} sm={10} md={7}>
-            {/* viewer container */}
-            <Card color="secondary">
-              <CardHeader title="This is where the viewer goes"></CardHeader>
-              {/* <CardMedia
+          {/* <Grid item sm={false} md={1} />
+          <Grid item xs={12} sm={10} md={7}> */}
+          {/* viewer container */}
+          {/* <Card color="secondary">
+              <CardHeader title="This is where the viewer goes"></CardHeader> */}
+          {/* <CardMedia
                 className={classes.media}
                 component="img"
                 height="220"
                 image="../src/LWC_ScreenCap.png" //this isn't working and I don't know how to fix it
                 title="Standin for Viewer"
               /> */}
-              <CardContent>
-                {/* <Typography> */}
-                {/* feedback params here to check that updates are happening */}
-                {Object.keys(paramIds).map((param, idx) => (
+          {/* <CardContent> */}
+          {/* <Typography> */}
+          {/* feedback params here to check that updates are happening */}
+          {/* {Object.keys(paramIds).map((param, idx) => (
                   <p key={idx}>
                     {idx}: {param} = {params[paramIds[param]].toString()}
                   </p>
-                ))}
-                {/* </Typography> */}
-              </CardContent>
+                ))} */}
+          {/* </Typography> */}
+          {/* </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={12} sm={10} md={3}>
+          </Grid> */}
+          <Grid
+            item
+            xs={12}
+            //  sm={10} md={3}
+          >
             <Paper color="secondary" variant="outlined">
               <Typography gutterBottom align="center">
                 {/* goal: replace with image for branding or just Zahner logo */}
@@ -383,7 +386,7 @@ export default function InputManager(props) {
               <ControlledAccordions accordionGroups={accordionGroupTest} />
             </Paper>
           </Grid>
-          <Grid item sm={false} md={1} />
+          {/* <Grid item sm={false} md={1} /> */}
         </Grid>
       </div>
     </div>
