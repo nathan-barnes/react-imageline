@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 // import ParamControl from "./ParamControl.js";
 import "./ShapeDiverContainer.css";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper, Card, CardContent } from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
 import staticParamData from "./ImageLinesParams";
@@ -173,36 +173,38 @@ export default function ShapeDiverLoad(props) {
 
   return (
     <div>
-      <Grid container spacing={2} direction="row-reverse">
+      <Grid container spacing={0} direction="row-reverse">
         {/* <Grid item sm={false} md={1} /> */}
 
         <Grid item xs={12} sm={8} md={8}>
-          {/* <div
+          <Card>
+            <CardContent>
+              <Paper color="secondary" variant="outlined">
+                {/* <div
             id="outerBox"
             className="ShapediverContainer"
             style={{ display: "relative" }}
           > */}
-          {/* <!-- ShapeDiver Viewer Main Container --> */}
-          {/* Goal: Add a border so it's visible while working on it */}
-          <div
-            id="sdv-container"
-            ref={containerSD}
-            style={{
-              position: "absolute",
-              width: "65%",
-              height: "65%",
-              right: "5%",
-              top: "5%",
-            }}
-          ></div>
+                {/* <!-- ShapeDiver Viewer Main Container --> */}
+                {/* Goal: Add a border so it's visible while working on it */}
+                <div
+                  id="sdv-container"
+                  ref={containerSD}
+                  style={{
+                    // position: "absolute",
+                    position: "absolute",
+                    width: "65%",
+                    height: "65%",
+                    right: "5%",
+                    top: "5%",
+                  }}
+                ></div>
+              </Paper>
+            </CardContent>
+          </Card>
           {/* </div> */}
         </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={3}
-          // md={4}
-        >
+        <Grid item xs={12} sm={4} md={4}>
           <div id="controls">
             {canRenderParams ? (
               <InputManager

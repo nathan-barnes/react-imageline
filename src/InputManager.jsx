@@ -263,7 +263,7 @@ export default function InputManager(props) {
           <p />
           <FeedbackButtonToggle
             option1="Waves"
-            option2="Lines"
+            option2="Lines---------------------------"
             {...getProps("LINES/WAVES")}
           />
           <p />
