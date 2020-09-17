@@ -20,7 +20,7 @@
   },
   {
     "id": "d97a59f6-8591-40d6-a259-aa9b2b9637ac",
-    "name": "IsStretched",
+    "name": "Bool.IsStretched",
     "plugin": "CommPlugin_1",
     "note": "Empty Boolean parameter",
     "type": "Bool",
@@ -31,7 +31,7 @@
   },
   {
     "id": "e58322b7-bcb6-4926-b194-da207e7c3604",
-    "name": "InvertSampling",
+    "name": "Bool.InvertSampling",
     "plugin": "CommPlugin_1",
     "note": "Empty Boolean parameter",
     "type": "Bool",
