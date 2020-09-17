@@ -16,7 +16,11 @@ import { Button } from "@material-ui/core";
 export default function FeedbackImageUpload(props) {
   //   const classes = useStyles();
   const type = "file";
-  const { value, pId, setValue } = props;
+  const {
+    // value,
+    pId,
+    setValue,
+  } = props;
 
   function onChange(event) {
     //get vars for updateParam function

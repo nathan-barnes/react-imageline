@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(10),
     color: theme.palette.text.secondary,
-    flexBasis: "70%",
+    flexBasis: "66.6%",
     flexShrink: 0,
     // alignContent: "center",
   },

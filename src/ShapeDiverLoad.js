@@ -1,16 +1,39 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/styles";
+
 // import ParamControl from "./ParamControl.js";
-import "./ShapeDiverContainer.css";
-import { Grid, Paper, Card, CardContent } from "@material-ui/core";
+// import "./ShapeDiverContainer.css";
+import {
+  Grid,
+  Paper,
+  Card,
+  // CardContent,
+  // Box,
+  // Typography,
+} from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
-import staticParamData from "./ImageLinesParams";
+// import staticParamData from "./ImageLinesParams";
+import staticParamData from "./ImageLinesParams0454.json";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
 
+const useStyles = makeStyles((theme) => ({
+  ShapediverContainer: {
+    margin: "3em",
+    display: "flex",
+
+    // margin-right: 3em,
+    // margin-left: 3em,
+    // display: flex,
+  },
+}));
+
 export default function ShapeDiverLoad(props) {
+  const classes = useStyles();
+
   const containerSD = useRef();
   const sdApi = useRef();
   const [paramDefs, setParamDefs] = useState({});
@@ -64,12 +87,13 @@ export default function ShapeDiverLoad(props) {
 
           brandedMode: false,
           deferGeometryLoading: false,
-          showZoomButton: false,
+          showZoomButton: true,
           showFullscreenButton: false,
           showInitialSpinner: false,
 
           runtimeId: "CommPlugin_1",
           busyGraphic:
+            // replace with Zahner logo
             "https://pbs.twimg.com/profile_images/864982129104625667/awrS6KR1_400x400.jpg",
         });
 
@@ -79,7 +103,7 @@ export default function ShapeDiverLoad(props) {
           api.scene.EVENTTYPE.VISIBILITY_ON,
           async () => {
             const parameters = await api.parameters.get().data;
-            console.log("Parameters: ", JSON.stringify(parameters));
+            // console.log("Parameters: ", JSON.stringify(parameters));
             const currentParams = parameters
               .filter((p) => !p.hidden)
               .reduce((vals, def) => ({ ...vals, [def.id]: def.value }), {});
@@ -173,38 +197,60 @@ export default function ShapeDiverLoad(props) {
 
   return (
     <div>
-      <Grid container spacing={0} direction="row-reverse">
-        {/* <Grid item sm={false} md={1} /> */}
-
-        <Grid item xs={12} sm={8} md={8}>
-          <Card>
-            <CardContent>
-              <Paper color="secondary" variant="outlined">
-                {/* <div
-            id="outerBox"
-            className="ShapediverContainer"
-            style={{ display: "relative" }}
-          > */}
-                {/* <!-- ShapeDiver Viewer Main Container --> */}
-                {/* Goal: Add a border so it's visible while working on it */}
-                <div
-                  id="sdv-container"
-                  ref={containerSD}
-                  style={{
-                    // position: "absolute",
-                    position: "absolute",
-                    width: "65%",
-                    height: "65%",
-                    right: "5%",
-                    top: "5%",
-                  }}
-                ></div>
-              </Paper>
-            </CardContent>
-          </Card>
-          {/* </div> */}
+      <Grid
+        container
+        spacing={1}
+        direction="row-reverse"
+        alignContent="center"
+        style={{ padding: 10 }}
+      >
+        <Grid item xs={12} md={8}>
+          {/* <!-- ShapeDiver Viewer Main Container --> */}
+          {liveLink ? (
+            <Paper
+              color="secondary"
+              variant="outlined"
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: 600,
+                maxHeight: 800,
+                flexShrink: 3,
+              }}
+            >
+              <div
+                // className={classes.ShapediverContainer}
+                id="sdv-container"
+                ref={containerSD}
+                style={{
+                  position: "inherit",
+                  top: "5%",
+                  bottom: "5%",
+                  height: "99%",
+                  width: "90",
+                  right: "5%",
+                  left: "5%",
+                  // flex: 1,
+                }}
+              />
+            </Paper>
+          ) : (
+            <Card>
+              <Paper
+                color="secondary"
+                variant="outlined"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 600,
+                  maxHeight: 800,
+                  flexShrink: 3,
+                }}
+              ></Paper>
+            </Card>
+          )}
         </Grid>
-        <Grid item xs={12} sm={4} md={4}>
+        <Grid item xs={12} md={4}>
           <div id="controls">
             {canRenderParams ? (
               <InputManager
@@ -220,7 +266,6 @@ export default function ShapeDiverLoad(props) {
             )}
           </div>
         </Grid>
-        {/* <Grid item sm={false} md={1} /> */}
       </Grid>
     </div>
   );

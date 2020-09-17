@@ -1,8 +1,10 @@
 import React from "react";
 import {
   useState,
+  useEffect,
   // useCallback
 } from "react";
+
 import {
   //   Button,
   Grid,
@@ -10,28 +12,31 @@ import {
   Typography,
   // Card,
   // CardHeader,
-  //   CardMedia,
+  // CardMedia,
   // CardContent,
   // Select,
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
 
-// import FeedbackButton from "./FeedbackButton";
-import FeedbackSlider from "./FeedbackSlider";
+// import Waves from "@material-ui/icons/Waves";
+// import GraphicEq from "@material-ui/icons/GraphicEq";
+// import RotateRightIcon from "@material-ui/icons/RotateRight";
 
-import FeedbackButtonToggle from "./FeedbackButtonToggle";
-import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
+// import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
+
+// import FeedbackSlider from "./FeedbackSlider";
+// import FeedbackButtonToggle from "./FeedbackButtonToggle";
+// import FeedbackImageUpload from "./FeedbackImageUpload";
+// import FeedbackSelect from "./FeedbackSelect";
+
 import ControlledAccordions from "./ControlledAccordions";
 
-import Waves from "@material-ui/icons/Waves";
-import GraphicEq from "@material-ui/icons/GraphicEq";
-import RotateRightIcon from "@material-ui/icons/RotateRight";
+import ImageMenu from "./ui-components/ImageMenu";
+import LinesMenu from "./ui-components/LinesMenu";
+import ScopeMenu from "./ui-components/ScopeMenu";
+// import MaterialMenu from "./ui-components/MaterialMenu";
+import PerfMenu from "./ui-components/PerfMenu";
 
-import { makeStyles } from "@material-ui/styles";
-import { useEffect } from "react";
-
-// import paramData from "./ImageLinesParams";
-import FeedbackImageUpload from "./FeedbackImageUpload";
-import FeedbackSelect from "./FeedbackSelect";
 //replace this with call to SDApi when adding volatile data
 
 // import theme from "./MuiTheme";
@@ -46,6 +51,11 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: "56.25%", // 16:9
+  },
+  controls: {
+    height: 600,
+
+    // minHeight: 800,
   },
 }));
 
@@ -72,22 +82,50 @@ export default function InputManager(props) {
   //then collect params and set to current
 
   //   These are the names of params in the SD app that will be used in the UI
+  // const paramNames = [
+  //   "Scope Width",
+  //   "Scope Height",
+  //   "Bool.InvertSampling",
+  //   "Bool.IsStretched",
+  //   "MATERIAL",
+  //   "ImageInput",
+  //   "LINES/WAVES",
+  //   "LINES/WAVES PER FT",
+  //   "PERF PER FT OF LINES/WAVES",
+  //   "ROTATE LINES/WAVES",
+  //   "WAVE CURVES-HIDE/SHOW",
+  //   "WAVE DRIVERS-HIDE/SHOW",
+  //   "WAVES: MAX AMPLITUDE",
+  //   "WAVES: SEED",
+  //   "Num.Stroke%ofMax",
+  // ];
+
+  // revised: Script version 0.4.54
   const paramNames = [
-    "Scope Width",
-    "Scope Height",
-    "Bool.InvertSampling",
-    "Bool.IsStretched",
-    "MATERIAL",
-    "ImageInput",
-    "LINES/WAVES",
-    "LINES/WAVES PER FT",
-    "PERF PER FT OF LINES/WAVES",
-    "ROTATE LINES/WAVES",
-    "WAVE CURVES-HIDE/SHOW",
-    "WAVE DRIVERS-HIDE/SHOW",
-    "WAVES: MAX AMPLITUDE",
-    "WAVES: SEED",
-    "Num.Stroke%ofMax",
+    "Waves: Lines/Waves",
+    "Scope: Width",
+    "Scope: Height",
+    "Image: Invert Sampling",
+    "Lines: Perf per Ft of Line",
+    "Image: Input",
+    "Lines: Stroke%ofMax",
+    "Lines: Per Ft",
+    "Lines: Rotation",
+    "Image: Crop/Stretch",
+    "Waves: Max Amplitude",
+    "Waves: Seed",
+    "Image: Invert Color",
+    "Reveal/2",
+    "Panel: Portrait/Landscape",
+    "Waves: Curves-Hide/Show",
+    "Waves: Drivers-Hide/Show",
+    "Person: Show/Hide",
+    "EmailHistoryFile",
+    "EmailFileType",
+    "EmailFileName",
+    "EmailAddress",
+    "EmailSubject",
+    "EmailBody",
   ];
 
   //Then search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
@@ -115,28 +153,6 @@ export default function InputManager(props) {
     // console.log("paramIdPaired: ", paramIdPaired);
     setParamIds(paramIdPaired);
   }, []);
-
-  // Generate a list of the params themselves for reference? or don't, since they can still be referenced by id, might violate DRY principle
-  // Change this so it only updates if the values change - useCallback?
-
-  // How do i make a generic function which updates a variable?  That is how the one that benj made works, with "Update Param".
-  // That one gathers all the params and does an update on all of them, along with the specific one.
-  // Then, somehow, that list of params gets updated as the current values.
-  // const updateParams = useCallback((value, paramId, type) => {
-  //   // console.log(
-  //   //   `you want to set param id ${paramId} of type ${type} to ${value}`
-  //   // );
-  //   if (type === "file") {
-  //     //When implementing with SD, the file needs to be passed, not the name
-  //     console.log(value, "\n", value.name);
-  //     setParams((prev) => ({ ...prev, [paramId]: value.name }));
-  //   } else setParams((prev) => ({ ...prev, [paramId]: value }));
-
-  //   // call a single function that updates the single param in an array of params
-  //   // call to SD update
-  //   // goal: make a dummy SD update function
-  //   // goal: display SD params array in the dummy viewer to show that it has updated in sibling (viewer)
-  // });
 
   //problem(?) - this is called every time the component renders.  Should only be called once to initialize, not get triggered on each update.
   const getProps = (paramName) => {
@@ -187,155 +203,68 @@ export default function InputManager(props) {
     return defaultParams;
   };
 
-  const accordionGroupTest = [
+  const getValue = (paramName) => params[paramIds[paramName]];
+
+  const accordionGroups = [
     {
       heading: "Image",
       subHeading:
-        (params[paramIds["ImageInput"]] || "Upload an Image") +
+        (params[paramIds["Image: Input"]] || "Upload an Image") +
         ` / ${
-          params[paramIds["Bool.InvertSampling"]] ? "Inverted" : "Original"
-        } / ${params[paramIds["Bool.IsStretched"]] ? "Stretched" : "Cropped"}`,
-      children: (
-        <div>
-          {/* goal: add image selector for this area, maybe something with a slideshow of thumbnails to select from 
-          image needs to be checked for size (less than ?? check Shapediver docs)
-          need to figure out how/where to store the image.  What happens to it once selected? Is it assigned to a variable?
-          */}
-          <FeedbackImageUpload {...getProps("ImageInput")} />
-          <p />
-          <FeedbackButtonToggle //Replace with Checkbox
-            option1="Invert"
-            option2="Original"
-            {...getProps("Bool.InvertSampling")}
-          />
-          <p />
-          <FeedbackButtonToggle
-            option1="Stretch"
-            option2="Crop"
-            {...getProps("Bool.IsStretched")}
-          />
-        </div>
-      ),
+          params[paramIds["Image: Invert Sampling"]] ? "Inverted" : "Original"
+        } / ${
+          params[paramIds["Image: Crop/Stretch"]] ? "Stretched" : "Cropped"
+        }`,
+      children: <ImageMenu getProps={getProps} />,
     },
 
     {
       heading: "Lines",
       subHeading:
-        params[paramIds["LINES/WAVES PER FT"]] +
-        (params[paramIds["LINES/WAVES"]] ? " Wave" : " Line") +
-        "s/ft, " +
-        params[paramIds["PERF PER FT OF LINES/WAVES"]] +
-        " Max Perf/ft @ " +
-        params[paramIds["ROTATE LINES/WAVES"]] +
+        params[paramIds["Lines: Per Ft"]] +
+        (params[paramIds["Waves: Lines/Waves"]] ? " Wave" : " Line") +
+        "s/ft, @ " +
+        params[paramIds["Lines: Rotation"]] +
         " deg",
-      children: (
-        <div>
-          {/* Goal: change so init values come from paramData
-            maybe: generate a inputProps param that is generic, then add it to the list of unique params */}
-
-          <FeedbackSlider
-            label={
-              (params[paramIds["LINES/WAVES"]] ? " Wave" : " Line") + "s/ft"
-            }
-            icon={Waves}
-            {...getProps("LINES/WAVES PER FT")}
-          />
-          <p />
-          <FeedbackSlider
-            label={"Max Perf/ft"}
-            {...getProps("PERF PER FT OF LINES/WAVES")}
-            icon={GraphicEq}
-          />
-          <p />
-          <FeedbackSlider
-            label={"Rotation (degrees)"}
-            {...getProps("ROTATE LINES/WAVES")}
-            icon={RotateRightIcon}
-          />
-          <p />
-          {/* Add line thickness slider 
-          "Num.Stroke%ofMax"*/}
-          <FeedbackSlider
-            label={"Stroke Thickness"}
-            {...getProps("Num.Stroke%ofMax")}
-            // icon={RotateRightIcon}
-          />
-          <p />
-          <FeedbackButtonToggle
-            option1="Waves"
-            option2="Lines---------------------------"
-            {...getProps("LINES/WAVES")}
-          />
-          <p />
-          <FeedbackSlider
-            label={"Max Amplitude (1-10)"}
-            {...getProps("WAVES: MAX AMPLITUDE")}
-            icon={AmplitudeIcon} //replace - look for sound related amplitude
-            disabled={params[paramIds["LINES/WAVES"]] ? false : true}
-          />
-          <p />
-          <FeedbackSlider
-            label={"Random Wave Seed"}
-            {...getProps("WAVES: SEED")}
-            // icon={BlankIcon} //replace - look for sound related amplitude
-            disabled={params[paramIds["LINES/WAVES"]] ? false : true}
-          />
-        </div>
-      ),
+      children: <LinesMenu getProps={getProps} getValue={getValue} />,
     },
+    {
+      heading: "Perforations",
+      subHeading:
+        params[paramIds["Lines: Perf per Ft of Line"]] +
+        " Max Perforations/ft @ " +
+        params[paramIds["Lines: Stroke%ofMax"]] +
+        "% Stroke",
+      children: <PerfMenu getProps={getProps} getValue={getValue} />,
+    },
+
     {
       heading: "Scope",
       subHeading:
-        params[paramIds["Scope Width"]] +
+        params[paramIds["Scope: Width"]] +
         `' X ` +
-        params[paramIds["Scope Height"]] +
-        `' ` +
-        (bool1 ? "Wall" : "Ceiling"),
+        params[paramIds["Scope: Height"]] +
+        `' `,
+      //  +
+      // (bool1 ? "Wall" : "Ceiling"),
       children: (
-        <div>
-          <FeedbackSlider
-            // key="Width"
-            label="Width"
-            {...getProps("Scope Width")}
-            icon={WidthIcon}
-          />
-          <p />
-          <FeedbackSlider
-            // key="Height"
-            label="Height"
-            {...getProps("Scope Height")}
-            icon={HeightIcon}
-          />
-          <p />
-          {/* NOT IMPLEMENTED */}
-          <FeedbackButtonToggle
-            option1="Wall"
-            option2="Ceiling"
-            setValue={setBool1}
-            value={bool1}
-          />
-        </div>
+        <ScopeMenu
+          getProps={getProps}
+          getValue={getValue}
+          setBool1={setBool1}
+          bool1={bool1}
+        />
       ),
     },
-    {
-      heading: "Material",
-      subHeading:
-        // "Pick Material and Finish" +
-        paramData.filter((p) => p.name === "MATERIAL")[0].choices[
-          params[paramIds["MATERIAL"]]
-        ],
-      children: (
-        <div>
-          {/* <label htmlFor="materials">Select Material </label>
-          <select id="materials" {...getProps("MATERIAL")}></select>
-          <p /> */}
-          <FeedbackSelect
-            name="Select Material and Finish"
-            {...getProps("MATERIAL")}
-          />
-        </div>
-      ),
-    },
+    // {
+    //   heading: "Material",
+    //   subHeading:
+    //     // "Pick Material and Finish" +
+    //     paramData.filter((p) => p.name === "MATERIAL")[0].choices[
+    //       params[paramIds["MATERIAL"]]
+    //     ],
+    //   children: <MaterialMenu getProps={getProps} getValue={getValue} />,
+    // },
     // goal: Add two different methods of selection from list: with swatches of different materials/colors, and using dropdown method
   ];
 
@@ -349,42 +278,38 @@ export default function InputManager(props) {
           alignContent="center"
         >
           {/* The grid values need tweaking!!! */}
-          {/* <Grid item sm={false} md={1} />
-          <Grid item xs={12} sm={10} md={7}> */}
-          {/* viewer container */}
-          {/* <Card color="secondary">
-              <CardHeader title="This is where the viewer goes"></CardHeader> */}
-          {/* <CardMedia
-                className={classes.media}
-                component="img"
-                height="220"
-                image="../src/LWC_ScreenCap.png" //this isn't working and I don't know how to fix it
-                title="Standin for Viewer"
-              /> */}
-          {/* <CardContent> */}
-          {/* <Typography> */}
+
+          {/* <Card>
+          <CardContent> 
+          <Typography> */}
           {/* feedback params here to check that updates are happening */}
           {/* {Object.keys(paramIds).map((param, idx) => (
                   <p key={idx}>
                     {idx}: {param} = {params[paramIds[param]].toString()}
                   </p>
-                ))} */}
-          {/* </Typography> */}
-          {/* </CardContent>
-            </Card>
-          </Grid> */}
+                ))}
+          </Typography>
+          </CardContent>
+            </Card> */}
+
           <Grid
             item
             xs={12}
             //  sm={10} md={3}
           >
-            <Paper color="secondary" variant="outlined">
-              <Typography gutterBottom align="center">
-                {/* goal: replace with image for branding or just Zahner logo */}
-                Zahner: ImageLines
-              </Typography>
-              <ControlledAccordions accordionGroups={accordionGroupTest} />
-            </Paper>
+            <div>
+              <Paper
+                color="secondary"
+                variant="outlined"
+                className={classes.controls}
+              >
+                <Typography gutterBottom align="center">
+                  {/* goal: replace with image for branding or just Zahner logo */}
+                  Zahner: ImageLines
+                </Typography>
+                <ControlledAccordions accordionGroups={accordionGroups} />
+              </Paper>
+            </div>
           </Grid>
           {/* <Grid item sm={false} md={1} /> */}
         </Grid>
