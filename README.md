@@ -1,25 +1,13 @@
-# Create React App example
+#ImageLines App, for A. Zahner Co.
 
-## How to use
+language: Javascript/React 
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+for embedding in Wordpress Site
+see Product OneNote for development notes
 
-```sh
-curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/create-react-app
-cd create-react-app
-```
+# Build instructions:
+(Nathan, please develop these instructions further)
 
-Install it and run:
+comment out src/index.html: Line 27 (sd script) before build.
 
-```sh
-npm install
-npm start
-```
 
-or:
-
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/create-react-app)
-
-## The idea behind the example
-
-This example demonstrates how you can use [Create React App](https://github.com/facebookincubator/create-react-app).
