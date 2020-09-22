@@ -128,6 +128,7 @@ export default function InputManager(props) {
     "EmailAddress",
     "EmailSubject",
     "EmailBody",
+    "Waves: EditModeOn",
   ];
 
   //Then search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
@@ -241,6 +242,7 @@ export default function InputManager(props) {
         params[paramIds["Lines: Stroke%ofMax"]] +
         "% Stroke",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
+      disabled: params[paramIds["Waves: EditModeOn"]],
     },
 
     {
@@ -310,7 +312,7 @@ export default function InputManager(props) {
         >
           <p />
           <Typography gutterBottom align="center">
-            <ZahnerLogo /> <strong>{"  ImageWaves"}</strong>
+            <ZahnerLogo /> <strong>{"  ImageLines"}</strong>
           </Typography>
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>

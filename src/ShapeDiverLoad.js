@@ -142,14 +142,25 @@ export default function ShapeDiverLoad(props) {
             //From the list of all params, filter down to only ones that are not hidden
             //From filtered list, reduce to array of id:value pairs
 
-            console.log("currentParams: ", JSON.stringify(currentParams));
-            console.log(`init parameters: `, JSON.stringify(parameters));
+            // console.log("currentParams: ", JSON.stringify(currentParams));
+            // console.log(`init parameters: `, JSON.stringify(parameters));
 
             // is there a problem having 2 await statements in an async call? is it necessary?
             // const currentExports = await api.exports.get().data;
 
             setParamDefs(parameters);
             setParams(currentParams);
+            console.log(
+              `api.parameters.get({name:"Points"}).data[0].data["points"]`,
+              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
+                "points"
+              ]
+            );
+            setPoints(
+              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
+                "points"
+              ]
+            );
             // setExports(currentExports);
             // setHistory(parameters);
             // console.log(`init history: `, JSON.stringify(parameters));
@@ -250,6 +261,8 @@ export default function ShapeDiverLoad(props) {
   // More on selectable points:
   const dragCallback = (event) => {
     const sphereID = event.scenePath.split(".")[1];
+    console.log("sphereId: ", sphereID);
+
     const sphereAsset = sdApi.current.scene.get(
       {
         id: sphereID,
@@ -257,24 +270,42 @@ export default function ShapeDiverLoad(props) {
       "CommPlugin_1"
     );
     const selectedSph = sphereAsset.data[0].name.split("_")[1];
+    console.log("selected Sph: ", selectedSph);
+
     setSelectedSphere(selectedSphere);
 
     const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
-    const tForm = getDataByName(tFormName);
-    // console.log("tForm.type(): ", tForm.type());
-    // console.log("newPos.type(): ", newPos.type());
-    const newPos = applyTransform(event.dragPosAbs, tForm);
+    console.log("tFormName ", tFormName);
 
+    const tForm = getDataByName(tFormName);
+
+    // console.log("tForm ", tForm);
+    // console.log("tForm.type(): ", tForm.type());
+
+    const newPos = event.dragPosAbs;
+    // console.log("newPos: ", newPos);
+    // console.log("newPos.type(): ", newPos.type());
+
+    const tPos = applyTransform(newPos, tForm);
+
+    // let tempPts = points;
+    // console.log("tempPts: ", tempPts);
     let tempPts = getDataByName("points");
-    tempPts.splice(selectedSph - 1, 1, [newPos.x, newPos.y, newPos.z]);
+    tempPts.splice(selectedSph - 1, 1, [tPos.x, tPos.y, tPos.z]);
     // console.log("drag tempPts spliced: ", tempPts);
 
+    // updateParam(
+    //   true,
+    //   // paramDefs.filter((p) => p.name === "Waves: EditModeOn").id,
+    //   sdApi.current.parameters.get().data({ name: "Waves: EditModeOn" }).id,
+    //   "bool"
+    // );
     updatePoints(tempPts);
   };
 
   async function updatePoints(pts) {
     setPoints(pts);
-    // console.log("pts to update: ", JSON.stringify(pts));
+    console.log("pts to update: ", JSON.stringify(pts));
     await sdApi.current.parameters.updateAsync({
       name: "Points",
       value: JSON.stringify({ points: pts }),
@@ -304,12 +335,8 @@ export default function ShapeDiverLoad(props) {
   const getDataByName = (dataName) => {
     const dataObj = sdApi.current.scene.getData().data[0];
     // console.log("data: ", JSON.stringify(dataObj.data[dataName]));
-
-    // console.log(
-    //   `JSON.parse(dataObj.data[${dataName}]): `,
-    //   JSON.parse(dataObj.data[dataName])
-    // );
-    return JSON.parse(dataObj.data[dataName]);
+    // console.log(`dataObj.data[${dataName}]: `, dataObj.data[dataName]);
+    return dataObj.data[dataName];
   };
 
   const resetPoints = () => {

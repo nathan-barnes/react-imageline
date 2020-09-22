@@ -72,7 +72,8 @@ export default function LinesMenu(props) {
             disabled={getValue("Waves: Lines/Waves") ? false : true}
           />
         </Grid> */}
-        <Grid item xs={12}>
+
+        {/* <Grid item xs={12}>
           <FeedbackButtonToggle
             option1="Show Waves"
             option2="Hide"
@@ -80,12 +81,21 @@ export default function LinesMenu(props) {
             disabled={getValue("Waves: Lines/Waves") ? false : true}
           />
           <p />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <FeedbackButtonToggle
             option1="Show Drivers"
             option2="Hide"
             {...getProps("Waves: Drivers-Hide/Show")}
+            disabled={getValue("Waves: Lines/Waves") ? false : true}
+          />
+          <p />
+        </Grid>
+        <Grid item xs={12}>
+          <FeedbackButtonToggle
+            option1="Edit Waves"
+            option2="Update"
+            {...getProps("Waves: EditModeOn")}
             disabled={getValue("Waves: Lines/Waves") ? false : true}
           />
         </Grid>

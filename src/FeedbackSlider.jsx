@@ -59,7 +59,7 @@ export default function FeedbackSlider(props) {
 
   const handleInputChange = (event) => {
     setValue(
-      event.target.value === "" ? "" : Number(event.target.value),
+      event.target.value === "" ? 0 : Number(event.target.value),
       pId,
       type
     );
