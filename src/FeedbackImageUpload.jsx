@@ -1,11 +1,12 @@
 import React from "react";
-// import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 
 // const useStyles = makeStyles((theme) => ({
 //   button: {
 //     //add button properties
 //     // width: 100,
+//     color: theme.primary
 //   },
 //   input: {
 //     //flex: 5,
@@ -14,7 +15,7 @@ import { Button } from "@material-ui/core";
 // }));
 
 export default function FeedbackImageUpload(props) {
-  //   const classes = useStyles();
+  // const classes = useStyles();
   const type = "file";
   const {
     // value,
@@ -59,6 +60,7 @@ export default function FeedbackImageUpload(props) {
         <Button
           variant="contained"
           component="span"
+          color="primary"
           // className={classes.button}
         >
           Upload Image

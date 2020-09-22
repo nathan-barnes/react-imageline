@@ -17,6 +17,7 @@ import {
   // Select,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import ZahnerLogo from "./ZahnerLogo";
 
 // import Waves from "@material-ui/icons/Waves";
 // import GraphicEq from "@material-ui/icons/GraphicEq";
@@ -53,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "56.25%", // 16:9
   },
   controls: {
-    height: 600,
+    height: 200,
+    maxHeight: 800,
 
     // minHeight: 800,
   },
@@ -161,7 +163,10 @@ export default function InputManager(props) {
     const thisParamData = paramData
       ? paramData.filter((p) => p.name === paramName)[0]
       : [];
-    // if (thisParamData) console.log("found: ", thisParamData);
+    if (!thisParamData)
+      // console.log("found: ", thisParamData);
+      // else
+      throw new console.error(`param: ${paramName} not found`);
 
     let defaultParams = {
       setValue: updateParams,
@@ -271,19 +276,19 @@ export default function InputManager(props) {
   return (
     <div>
       <div>
-        <Grid
+        {/* <Grid
           container
           spacing={0}
           direction="row-reverse"
           alignContent="center"
-        >
-          {/* The grid values need tweaking!!! */}
+        > */}
+        {/* The grid values need tweaking!!! */}
 
-          {/* <Card>
+        {/* <Card>
           <CardContent> 
           <Typography> */}
-          {/* feedback params here to check that updates are happening */}
-          {/* {Object.keys(paramIds).map((param, idx) => (
+        {/* feedback params here to check that updates are happening */}
+        {/* {Object.keys(paramIds).map((param, idx) => (
                   <p key={idx}>
                     {idx}: {param} = {params[paramIds[param]].toString()}
                   </p>
@@ -292,27 +297,26 @@ export default function InputManager(props) {
           </CardContent>
             </Card> */}
 
-          <Grid
+        {/* <Grid
             item
             xs={12}
             //  sm={10} md={3}
-          >
-            <div>
-              <Paper
-                color="secondary"
-                variant="outlined"
-                className={classes.controls}
-              >
-                <Typography gutterBottom align="center">
-                  {/* goal: replace with image for branding or just Zahner logo */}
-                  Zahner: ImageLines
-                </Typography>
-                <ControlledAccordions accordionGroups={accordionGroups} />
-              </Paper>
-            </div>
+          > 
+            <div> */}
+        <Paper
+          color="secondary"
+          variant="outlined"
+          className={classes.controls}
+        >
+          <p />
+          <Typography gutterBottom align="center">
+            <ZahnerLogo /> <strong>{"  ImageWaves"}</strong>
+          </Typography>
+          <ControlledAccordions accordionGroups={accordionGroups} />
+        </Paper>
+        {/* </div>
           </Grid>
-          {/* <Grid item sm={false} md={1} /> */}
-        </Grid>
+        </Grid> */}
       </div>
     </div>
   );

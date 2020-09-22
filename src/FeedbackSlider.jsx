@@ -9,10 +9,10 @@ import { SvgIcon } from "@material-ui/core";
 const useStyles = makeStyles({
   // This is probably why the RWD isn't working - it overrides the RWD behavior (?)
   root: {
-    minWidth: 300,
+    minWidth: 200,
     // flexBasis: "75%",
     flexGrow: 5,
-    flexBasis: 300,
+    flexBasis: 400,
   },
   input: {
     width: 50,
