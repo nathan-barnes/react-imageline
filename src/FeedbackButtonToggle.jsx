@@ -13,11 +13,10 @@ export default function FeedbackButtonToggle(props) {
   // const classes = useStyles();
 
   const type = "bool";
-  const { option1, option2, pId, disabled, hidden } = props;
+  const { option1, option2, pId, disabled } = props;
 
   const { value, setValue } = props;
   const disable = disabled || false;
-  const hide = hidden || false;
 
   const name1 = option1 || "One";
   const name2 = option2 || "Two";

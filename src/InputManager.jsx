@@ -7,7 +7,7 @@ import {
 
 import {
   //   Button,
-  Grid,
+  // Grid,
   Paper,
   Typography,
   // Card,
@@ -75,7 +75,13 @@ export default function InputManager(props) {
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
-  const { params, paramData, updateParams, updateParamNoSD } = props;
+  const {
+    params,
+    paramData,
+    updateParams,
+    updateParamNoSD,
+    resetPoints,
+  } = props;
 
   // console.log(
   //   `From parent: \nparams: ${params}\n\nparamData: ${paramData}\n\nupdateParams: ${updateParams}`
@@ -232,7 +238,13 @@ export default function InputManager(props) {
         "s/ft, @ " +
         params[paramIds["Lines: Rotation"]] +
         " deg",
-      children: <LinesMenu getProps={getProps} getValue={getValue} />,
+      children: (
+        <LinesMenu
+          getProps={getProps}
+          getValue={getValue}
+          resetPoints={resetPoints}
+        />
+      ),
     },
     {
       heading: "Perforations",
@@ -312,7 +324,10 @@ export default function InputManager(props) {
         >
           <p />
           <Typography gutterBottom align="center">
-            <ZahnerLogo /> <strong>{"  ImageLines"}</strong>
+            <a href={"http://azahner.com"}>
+              <ZahnerLogo />
+            </a>{" "}
+            <strong>{"  ImageLines"}</strong>
           </Typography>
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>

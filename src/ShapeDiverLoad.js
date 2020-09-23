@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/styles";
+// import { makeStyles } from "@material-ui/styles";
 
 // import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
@@ -14,25 +14,26 @@ import {
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
 // import staticParamData from "./ImageLinesParams";
-import staticParamData from "./ImageLinesParams0454.json";
+// import staticParamData from "./ImageLinesParams0454.json";
+import staticParamData from "./ImageLinesParams111.json";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
 
-const useStyles = makeStyles((theme) => ({
-  ShapediverContainer: {
-    margin: "3em",
-    display: "flex",
+// const useStyles = makeStyles((theme) => ({
+//   ShapediverContainer: {
+//     margin: "3em",
+//     display: "flex",
 
-    // margin-right: 3em,
-    // margin-left: 3em,
-    // display: flex,
-  },
-}));
+//     // margin-right: 3em,
+//     // margin-left: 3em,
+//     // display: flex,
+//   },
+// }));
 
 export default function ShapeDiverLoad(props) {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const containerSD = useRef();
   const sdApi = useRef();
@@ -56,11 +57,9 @@ export default function ShapeDiverLoad(props) {
   // };
 
   //Adding Selectable Points:
-  const [selectMode, setSelectMode] = useState(false);
-  const [sphereID, setSphereID] = useState();
-
-  const [selectedSphere, setSelectedSphere] = useState(0);
-  const [points, setPoints] = useState([]);
+  // const [selectMode, setSelectMode] = useState(false);
+  const sphereRefs = useRef([]);
+  const sphPoints = useRef([]);
 
   const hoverEffect = {
     active: {
@@ -156,11 +155,10 @@ export default function ShapeDiverLoad(props) {
                 "points"
               ]
             );
-            setPoints(
-              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
-                "points"
-              ]
-            );
+
+            sphPoints.current = JSON.parse(
+              api.parameters.get({ name: "Points" }).data[0].value
+            )["points"];
             // setExports(currentExports);
             // setHistory(parameters);
             // console.log(`init history: `, JSON.stringify(parameters));
@@ -188,17 +186,19 @@ export default function ShapeDiverLoad(props) {
         var updateObjects = [];
         for (let assetnum in sphereAssets) {
           let asset = sphereAssets[assetnum];
-          console.log(`asset: ${JSON.stringify(asset)}`);
+          // console.log(`asset: ${JSON.stringify(asset)}`);
           let updateObject = {
             id: asset.id,
             duration: 0,
           };
-          if (asset.name.includes("Sphere_"))
+          if (asset.name.includes("Sphere_")) {
             updateObject.interactionGroup = sphereGroup.id;
-
-          updateObjects.push(updateObject);
+            updateObject.name = asset.name;
+            updateObjects.push(updateObject);
+          }
         }
-        updateObjects.map((e) => console.log(JSON.stringify(e)));
+        sphereRefs.current = updateObjects;
+        // sphereRefs.current.map((e) => console.log(JSON.stringify(e)));
         api.scene.updatePersistentAsync(updateObjects, "CommPlugin_1");
         api.scene.addEventListener(api.scene.EVENTTYPE.DRAG_END, dragCallback);
         // api.scene.addEventListener(api.scene.EVENTTYPE.SELECT_ON, addPoint);;
@@ -227,9 +227,6 @@ export default function ShapeDiverLoad(props) {
   }, []);
 
   const updateParamNoSD = useCallback((value, id, type) => {
-    // const { id, value, type } = evt.target;
-
-    //where does "prev" come from?  How does it get populated with the correct data?
     setParams((prev) =>
       type === "file" ? { ...prev, [id]: value.name } : { ...prev, [id]: value }
     );
@@ -263,16 +260,25 @@ export default function ShapeDiverLoad(props) {
     const sphereID = event.scenePath.split(".")[1];
     console.log("sphereId: ", sphereID);
 
-    const sphereAsset = sdApi.current.scene.get(
-      {
-        id: sphereID,
-      },
-      "CommPlugin_1"
-    );
-    const selectedSph = sphereAsset.data[0].name.split("_")[1];
-    console.log("selected Sph: ", selectedSph);
+    // const sphereAsset = sdApi.current.scene.get(
+    //   {
+    //     id: sphereID,
+    //   },
+    //   "CommPlugin_1"
+    // );
+    const selectedSph = sphereRefs.current
+      .find((ref) => ref.id === sphereID)
+      .name.split("_")[1];
+    // const selectedSph = sphereAsset.data[0].name.split("_")[1];
 
-    setSelectedSphere(selectedSphere);
+    console.log(
+      "selected Sph: ",
+      selectedSph
+      // "\nlocalSph: ",
+      // localselectedSph
+    );
+
+    // setSelectedSphere(selectedSph);
 
     const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
     console.log("tFormName ", tFormName);
@@ -288,25 +294,19 @@ export default function ShapeDiverLoad(props) {
 
     const tPos = applyTransform(newPos, tForm);
 
-    // let tempPts = points;
+    let tempPts = sphPoints.current;
+    // let tempPts = getDataByName("points");
     // console.log("tempPts: ", tempPts);
-    let tempPts = getDataByName("points");
     tempPts.splice(selectedSph - 1, 1, [tPos.x, tPos.y, tPos.z]);
     // console.log("drag tempPts spliced: ", tempPts);
 
-    // updateParam(
-    //   true,
-    //   // paramDefs.filter((p) => p.name === "Waves: EditModeOn").id,
-    //   sdApi.current.parameters.get().data({ name: "Waves: EditModeOn" }).id,
-    //   "bool"
-    // );
     updatePoints(tempPts);
   };
 
-  async function updatePoints(pts) {
-    setPoints(pts);
-    console.log("pts to update: ", JSON.stringify(pts));
-    await sdApi.current.parameters.updateAsync({
+  function updatePoints(pts) {
+    sphPoints.current = pts;
+    // console.log("pts to update: ", JSON.stringify(pts));
+    sdApi.current.parameters.updateAsync({
       name: "Points",
       value: JSON.stringify({ points: pts }),
     });
@@ -340,7 +340,7 @@ export default function ShapeDiverLoad(props) {
   };
 
   const resetPoints = () => {
-    updatePoints([
+    sphPoints.current = [
       [0, 0, 0],
       [0, 0.333333, 0],
       [0, 0.666667, 0],
@@ -349,7 +349,8 @@ export default function ShapeDiverLoad(props) {
       [0, 0.333333, 0],
       [0, 0.666667, 0],
       [0, 1, 0],
-    ]);
+    ];
+    updatePoints(sphPoints.current);
   };
 
   // Note: may use this later to add points to curves on demand
@@ -443,6 +444,7 @@ export default function ShapeDiverLoad(props) {
                 paramData={paramDefs}
                 params={params}
                 // exports={exports}
+                resetPoints={resetPoints}
               />
             ) : (
               <div />

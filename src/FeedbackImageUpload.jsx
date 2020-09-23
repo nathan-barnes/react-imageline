@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
+// import { makeStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 
 // const useStyles = makeStyles((theme) => ({
@@ -17,11 +17,7 @@ import { Button } from "@material-ui/core";
 export default function FeedbackImageUpload(props) {
   // const classes = useStyles();
   const type = "file";
-  const {
-    // value,
-    pId,
-    setValue,
-  } = props;
+  const { pId, setValue } = props;
 
   function onChange(event) {
     //get vars for updateParam function
@@ -36,9 +32,6 @@ export default function FeedbackImageUpload(props) {
         setValue(file, pId, type);
       }
     }
-
-    //Call update Param
-    //   updateParam(value, pId, type);
   }
 
   return (
