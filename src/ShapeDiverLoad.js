@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/styles";
+import asyncLogParams from './logging-components/firebaseRealtime';
 
 // import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
@@ -152,7 +153,7 @@ export default function ShapeDiverLoad(props) {
     // console.log("History: ", history);
 
     if (sdApi && sdApi.current) {
-      sdApi.current.parameters.updateAsync({ id, value });
+      sdApi.current.parameters.updateAsync({ id, value }).then(asyncLogParams( id, value));
       console.log("id, value, type: ", id, value, type);
     }
   }, []);
