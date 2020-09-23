@@ -37,6 +37,8 @@ import LinesMenu from "./ui-components/LinesMenu";
 import ScopeMenu from "./ui-components/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
 import PerfMenu from "./ui-components/PerfMenu";
+import ScreenCapButton from "./ScreenCapButton";
+import TestMenu from "./ui-components/TestMenu";
 
 //replace this with call to SDApi when adding volatile data
 
@@ -81,6 +83,7 @@ export default function InputManager(props) {
     updateParams,
     updateParamNoSD,
     resetPoints,
+    sdApi,
   } = props;
 
   // console.log(
@@ -274,6 +277,11 @@ export default function InputManager(props) {
           bool1={bool1}
         />
       ),
+    },
+    {
+      heading: "Test",
+      subHeading: "Test Features",
+      children: <TestMenu {...props} />,
     },
     // {
     //   heading: "Material",

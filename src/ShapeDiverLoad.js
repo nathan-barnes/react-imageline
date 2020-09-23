@@ -7,6 +7,8 @@ import {
   Grid,
   Paper,
   Card,
+  Button,
+  Link,
   // CardContent,
   // Box,
   // Typography,
@@ -16,6 +18,7 @@ import InputManager from "./InputManager";
 // import staticParamData from "./ImageLinesParams";
 // import staticParamData from "./ImageLinesParams0454.json";
 import staticParamData from "./ImageLinesParams111.json";
+import ScreenCapButton from "./ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
@@ -149,12 +152,12 @@ export default function ShapeDiverLoad(props) {
 
             setParamDefs(parameters);
             setParams(currentParams);
-            console.log(
-              `api.parameters.get({name:"Points"}).data[0].data["points"]`,
-              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
-                "points"
-              ]
-            );
+            // console.log(
+            //   `api.parameters.get({name:"Points"}).data[0].data["points"]`,
+            //   JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
+            //     "points"
+            //   ]
+            // );
 
             sphPoints.current = JSON.parse(
               api.parameters.get({ name: "Points" }).data[0].value
@@ -187,13 +190,13 @@ export default function ShapeDiverLoad(props) {
         for (let assetnum in sphereAssets) {
           let asset = sphereAssets[assetnum];
           // console.log(`asset: ${JSON.stringify(asset)}`);
-          let updateObject = {
-            id: asset.id,
-            duration: 0,
-          };
           if (asset.name.includes("Sphere_")) {
-            updateObject.interactionGroup = sphereGroup.id;
-            updateObject.name = asset.name;
+            let updateObject = {
+              id: asset.id,
+              duration: 0,
+              interactionGroup: sphereGroup.id,
+              name: asset.name,
+            };
             updateObjects.push(updateObject);
           }
         }
@@ -222,6 +225,8 @@ export default function ShapeDiverLoad(props) {
         .then(function (result) {
           sdApi.current.scene.camera.zoomAsync();
         });
+      //This is where logging goes.  also add log of errors/failed calls to api
+      //Also add log entry in updatePoints()
       console.log("id, value, type: ", id, value, type);
     }
   }, []);
@@ -258,30 +263,14 @@ export default function ShapeDiverLoad(props) {
   // More on selectable points:
   const dragCallback = (event) => {
     const sphereID = event.scenePath.split(".")[1];
-    console.log("sphereId: ", sphereID);
+    // console.log("sphereId: ", sphereID);
 
-    // const sphereAsset = sdApi.current.scene.get(
-    //   {
-    //     id: sphereID,
-    //   },
-    //   "CommPlugin_1"
-    // );
     const selectedSph = sphereRefs.current
       .find((ref) => ref.id === sphereID)
       .name.split("_")[1];
-    // const selectedSph = sphereAsset.data[0].name.split("_")[1];
-
-    console.log(
-      "selected Sph: ",
-      selectedSph
-      // "\nlocalSph: ",
-      // localselectedSph
-    );
-
-    // setSelectedSphere(selectedSph);
 
     const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
-    console.log("tFormName ", tFormName);
+    // console.log("tFormName ", tFormName);
 
     const tForm = getDataByName(tFormName);
 
@@ -445,12 +434,14 @@ export default function ShapeDiverLoad(props) {
                 params={params}
                 // exports={exports}
                 resetPoints={resetPoints}
+                sdApi={sdApi}
               />
             ) : (
               <div />
             )}
           </div>
         </Grid>
+        <Grid item xs={12}></Grid>
       </Grid>
     </div>
   );

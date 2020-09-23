@@ -83,7 +83,7 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <TheIcon />
         </Grid>
-        <Grid item sm>
+        <Grid item xs>
           <Slider
             step={step}
             min={min}
@@ -102,10 +102,7 @@ export default function FeedbackSlider(props) {
             className={classes.input}
             value={value || defValue}
             margin="dense"
-            // onChange={handleSliderDrag}
-            // onChangeCommitted={handleInputChange}
-            // onChange={handleInputChange}
-            onInput={handleInputChange}
+            onChange={handleInputChange}
             onBlur={handleBlur}
             inputProps={{
               step: step,

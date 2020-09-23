@@ -8,7 +8,7 @@ import Waves from "@material-ui/icons/Waves";
 // import GraphicEq from "@material-ui/icons/GraphicEq";
 import RotateRightIcon from "@material-ui/icons/RotateRight";
 
-import { AmplitudeIcon } from "../DimIcons";
+// import { AmplitudeIcon } from "../DimIcons";
 
 export default function LinesMenu(props) {
   const { getProps, getValue, resetPoints } = props;
