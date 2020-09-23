@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 
 // import FeedbackButtonToggle from "../FeedbackButtonToggle";
 import FeedbackSlider from "../FeedbackSlider";
@@ -29,6 +29,14 @@ export default function ScopeMenu(props) {
             {...getProps("Scope: Height")}
             icon={HeightIcon}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <p />
+          <Typography align="center">
+            <a href={"https://www.azahner.com/contact/"}>Contact Us</a> to
+            customize <strong>ImageLines</strong> for specific dimensions or
+            conditions.
+          </Typography>
         </Grid>
         {/* <Grid item xs={12}>
           <FeedbackButtonToggle

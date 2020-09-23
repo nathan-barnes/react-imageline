@@ -48,6 +48,7 @@ export default function ControlledAccordions(props) {
           expanded={expanded === "panel" + i}
           onChange={handleChange("panel" + i)}
           key={"accordion" + i}
+          disabled={group.disabled || false}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
