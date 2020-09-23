@@ -6,6 +6,7 @@ import { Button } from "@material-ui/core";
 //   button: {
 //     //add button properties
 //     // width: 100,
+//     color: theme.primary
 //   },
 //   input: {
 //     //flex: 5,
@@ -14,13 +15,9 @@ import { Button } from "@material-ui/core";
 // }));
 
 export default function FeedbackImageUpload(props) {
-  //   const classes = useStyles();
+  // const classes = useStyles();
   const type = "file";
-  const {
-    // value,
-    pId,
-    setValue,
-  } = props;
+  const { pId, setValue } = props;
 
   function onChange(event) {
     //get vars for updateParam function
@@ -35,9 +32,6 @@ export default function FeedbackImageUpload(props) {
         setValue(file, pId, type);
       }
     }
-
-    //Call update Param
-    //   updateParam(value, pId, type);
   }
 
   return (
@@ -59,6 +53,7 @@ export default function FeedbackImageUpload(props) {
         <Button
           variant="contained"
           component="span"
+          color="primary"
           // className={classes.button}
         >
           Upload Image

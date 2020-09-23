@@ -1,6 +1,5 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/styles";
-import asyncLogParams from './logging-components/firebaseRealtime';
+// import { makeStyles } from "@material-ui/styles";
 
 // import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
@@ -15,25 +14,26 @@ import {
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
 // import staticParamData from "./ImageLinesParams";
-import staticParamData from "./ImageLinesParams0454.json";
+// import staticParamData from "./ImageLinesParams0454.json";
+import staticParamData from "./ImageLinesParams111.json";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
 
-const useStyles = makeStyles((theme) => ({
-  ShapediverContainer: {
-    margin: "3em",
-    display: "flex",
+// const useStyles = makeStyles((theme) => ({
+//   ShapediverContainer: {
+//     margin: "3em",
+//     display: "flex",
 
-    // margin-right: 3em,
-    // margin-left: 3em,
-    // display: flex,
-  },
-}));
+//     // margin-right: 3em,
+//     // margin-left: 3em,
+//     // display: flex,
+//   },
+// }));
 
 export default function ShapeDiverLoad(props) {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const containerSD = useRef();
   const sdApi = useRef();
@@ -42,11 +42,41 @@ export default function ShapeDiverLoad(props) {
   // const [exports, setExports] = useState({});
 
   //Trying to add history.  Don't know how yet
-  const [history, recordHistory] = useState([]);
+  // const [history, setHistory] = useState({});
+  // const [changeCounter, setChangeCounter] = useState(0);
 
-  // const recordHistory = (record) => {
-  //   history.push(record);
+  // const recordHistory = (id, value) => {
+  //   console.log(
+  //     `changeCount: ${changeCounter} \nnew record: id: ${id}, value: ${value} `
+  //   );
+  //   setChangeCounter((prev) => prev++);
+  //   // setHistory((prev) => ({
+  //   //   ...prev,
+  //   //   [changeCounter]: { id: id, value: value },
+  //   // }));
   // };
+
+  //Adding Selectable Points:
+  // const [selectMode, setSelectMode] = useState(false);
+  const sphereRefs = useRef([]);
+  const sphPoints = useRef([]);
+
+  const hoverEffect = {
+    active: {
+      name: "colorHighlight",
+      options: {
+        color: [100, 100, 100],
+      },
+    },
+  };
+
+  const sphereGroup = {
+    id: "spheres",
+    draggable: true,
+    dragEffect: hoverEffect,
+    hoverable: true,
+    hoverEffect: hoverEffect,
+  };
 
   const { liveLink } = props || true;
 
@@ -86,16 +116,16 @@ export default function ShapeDiverLoad(props) {
           // URL of the ShapeDiver backend system used
           modelViewUrl: "eu-central-1",
 
-          brandedMode: false,
+          // brandedMode: false,
           deferGeometryLoading: false,
-          showZoomButton: true,
-          showFullscreenButton: false,
-          showInitialSpinner: false,
+          // showZoomButton: true,
+          // showFullscreenButton: false,
+          // showInitialSpinner: false,
 
           runtimeId: "CommPlugin_1",
-          busyGraphic:
-            // replace with Zahner logo
-            "https://pbs.twimg.com/profile_images/864982129104625667/awrS6KR1_400x400.jpg",
+          // busyGraphic:
+          //   // replace with Zahner logo
+          //   "https://pbs.twimg.com/profile_images/864982129104625667/awrS6KR1_400x400.jpg",
         });
 
         console.log("ShapeDiver CommPlugin successfully loaded");
@@ -112,14 +142,26 @@ export default function ShapeDiverLoad(props) {
             //From filtered list, reduce to array of id:value pairs
 
             // console.log("currentParams: ", JSON.stringify(currentParams));
+            // console.log(`init parameters: `, JSON.stringify(parameters));
 
             // is there a problem having 2 await statements in an async call? is it necessary?
-            const currentExports = await api.exports.get().data;
+            // const currentExports = await api.exports.get().data;
 
             setParamDefs(parameters);
             setParams(currentParams);
+            console.log(
+              `api.parameters.get({name:"Points"}).data[0].data["points"]`,
+              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
+                "points"
+              ]
+            );
+
+            sphPoints.current = JSON.parse(
+              api.parameters.get({ name: "Points" }).data[0].value
+            )["points"];
             // setExports(currentExports);
-            recordHistory({ parameters });
+            // setHistory(parameters);
+            // console.log(`init history: `, JSON.stringify(parameters));
           }
         );
 
@@ -136,7 +178,31 @@ export default function ShapeDiverLoad(props) {
 
         await api.updateSettingsAsync(sceneSettings);
       }
-      loadApi();
+      loadApi().then(() => {
+        api.scene.updateInteractionGroups(sphereGroup);
+
+        const assets = api.scene.get(null, "CommPlugin_1");
+        const sphereAssets = assets.data.filter((a) => a.format !== "material");
+        var updateObjects = [];
+        for (let assetnum in sphereAssets) {
+          let asset = sphereAssets[assetnum];
+          // console.log(`asset: ${JSON.stringify(asset)}`);
+          let updateObject = {
+            id: asset.id,
+            duration: 0,
+          };
+          if (asset.name.includes("Sphere_")) {
+            updateObject.interactionGroup = sphereGroup.id;
+            updateObject.name = asset.name;
+            updateObjects.push(updateObject);
+          }
+        }
+        sphereRefs.current = updateObjects;
+        // sphereRefs.current.map((e) => console.log(JSON.stringify(e)));
+        api.scene.updatePersistentAsync(updateObjects, "CommPlugin_1");
+        api.scene.addEventListener(api.scene.EVENTTYPE.DRAG_END, dragCallback);
+        // api.scene.addEventListener(api.scene.EVENTTYPE.SELECT_ON, addPoint);;
+      });
     }
   }, []); //Empty Array here means this function will run once and will not update.
 
@@ -146,28 +212,24 @@ export default function ShapeDiverLoad(props) {
     setParams((prev) =>
       type === "file" ? { ...prev, [id]: value.name } : { ...prev, [id]: value }
     );
-    //trying to add history.  Don't know how yet.
-    // recordHistory((prev) => {
-    //   prev.push(params);
-    // });
-    // console.log("History: ", history);
+    // trying to add history.  Don't know how yet.
+    // recordHistory(id, value);
+    // console.log(`history: `, history);
 
     if (sdApi && sdApi.current) {
-      sdApi.current.parameters.updateAsync({ id, value }).then(asyncLogParams( id, value));
+      sdApi.current.parameters
+        .updateAsync({ id, value })
+        .then(function (result) {
+          sdApi.current.scene.camera.zoomAsync();
+        });
       console.log("id, value, type: ", id, value, type);
     }
   }, []);
 
   const updateParamNoSD = useCallback((value, id, type) => {
-    // const { id, value, type } = evt.target;
-
-    //where does "prev" come from?  How does it get populated with the correct data?
     setParams((prev) =>
       type === "file" ? { ...prev, [id]: value.name } : { ...prev, [id]: value }
     );
-    // if (sdApi) {
-    //   sdApi.current.parameters.updateAsync({ id, value });
-    // }
   }, []);
 
   /*
@@ -192,6 +254,126 @@ export default function ShapeDiverLoad(props) {
   //       });
   //   }
   // }, []);
+
+  // More on selectable points:
+  const dragCallback = (event) => {
+    const sphereID = event.scenePath.split(".")[1];
+    console.log("sphereId: ", sphereID);
+
+    // const sphereAsset = sdApi.current.scene.get(
+    //   {
+    //     id: sphereID,
+    //   },
+    //   "CommPlugin_1"
+    // );
+    const selectedSph = sphereRefs.current
+      .find((ref) => ref.id === sphereID)
+      .name.split("_")[1];
+    // const selectedSph = sphereAsset.data[0].name.split("_")[1];
+
+    console.log(
+      "selected Sph: ",
+      selectedSph
+      // "\nlocalSph: ",
+      // localselectedSph
+    );
+
+    // setSelectedSphere(selectedSph);
+
+    const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
+    console.log("tFormName ", tFormName);
+
+    const tForm = getDataByName(tFormName);
+
+    // console.log("tForm ", tForm);
+    // console.log("tForm.type(): ", tForm.type());
+
+    const newPos = event.dragPosAbs;
+    // console.log("newPos: ", newPos);
+    // console.log("newPos.type(): ", newPos.type());
+
+    const tPos = applyTransform(newPos, tForm);
+
+    let tempPts = sphPoints.current;
+    // let tempPts = getDataByName("points");
+    // console.log("tempPts: ", tempPts);
+    tempPts.splice(selectedSph - 1, 1, [tPos.x, tPos.y, tPos.z]);
+    // console.log("drag tempPts spliced: ", tempPts);
+
+    updatePoints(tempPts);
+  };
+
+  function updatePoints(pts) {
+    sphPoints.current = pts;
+    // console.log("pts to update: ", JSON.stringify(pts));
+    sdApi.current.parameters.updateAsync({
+      name: "Points",
+      value: JSON.stringify({ points: pts }),
+    });
+  }
+
+  /**
+   *
+   * logic from  https://gamedev.stackexchange.com/questions/28249/calculate-new-vertex-position-given-a-transform-matrix
+   * @param {*} point - point{x,y,z} to transform
+   * @param {*} m - array[16] - 3d transform matrix
+   */
+  const applyTransform = (point, m) => {
+    const { x, y, z } = point;
+    const w = 1;
+    const tX = m[0] * x + m[1] * y + m[2] * z + m[3] * w;
+    const tY = m[4] * x + m[5] * y + m[6] * z + m[7] * w;
+    const tZ = m[8] * x + m[9] * y + m[10] * z + m[11] * w;
+    const tW = m[12] * x + m[13] * y + m[14] * z + m[15] * w;
+    const pointTformed = { x: tX / tW, y: tY / tW, z: tZ / tW };
+    // console.log(
+    //   `JSON.stringify(pointTformed): ${JSON.stringify(pointTformed)}`
+    // );
+    return pointTformed;
+  };
+
+  const getDataByName = (dataName) => {
+    const dataObj = sdApi.current.scene.getData().data[0];
+    // console.log("data: ", JSON.stringify(dataObj.data[dataName]));
+    // console.log(`dataObj.data[${dataName}]: `, dataObj.data[dataName]);
+    return dataObj.data[dataName];
+  };
+
+  const resetPoints = () => {
+    sphPoints.current = [
+      [0, 0, 0],
+      [0, 0.333333, 0],
+      [0, 0.666667, 0],
+      [0, 1, 0],
+      [0, 0, 0],
+      [0, 0.333333, 0],
+      [0, 0.666667, 0],
+      [0, 1, 0],
+    ];
+    updatePoints(sphPoints.current);
+  };
+
+  // Note: may use this later to add points to curves on demand
+  // const addPoint = (event) => {
+  //   const pickPoint = event.selectPos;
+  //   console.log(`pickPoint: ${JSON.stringify(pickPoint)}`);
+  //   var tempPts = getDataByName("points");
+
+  //   console.log("points before  setting: ", tempPts);
+  //   if (tempPts.length < 3) {
+  //     tempPts.push([pickPoint.x, pickPoint.y, pickPoint.z]);
+  //     console.log("tempPts after adding: ", tempPts);
+  //     updatePoints(tempPts);
+  //   }
+  //   const tempInfo =
+  //     tempPts.length === 1
+  //       ? "Drag Existing Points to update position on the mesh"
+  //       : tempPts.length === 3
+  //       ? "Maximum number of points exceeded"
+  //       : "Click on the mesh to pick a point on it...";
+
+  //   setInfo(tempInfo);
+  // };
 
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
@@ -225,6 +407,7 @@ export default function ShapeDiverLoad(props) {
                 ref={containerSD}
                 style={{
                   position: "inherit",
+                  //sticky may allow it to stay at the top when scrolling
                   top: "5%",
                   bottom: "5%",
                   height: "99%",
@@ -261,6 +444,7 @@ export default function ShapeDiverLoad(props) {
                 paramData={paramDefs}
                 params={params}
                 // exports={exports}
+                resetPoints={resetPoints}
               />
             ) : (
               <div />

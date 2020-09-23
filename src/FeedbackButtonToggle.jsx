@@ -13,10 +13,10 @@ export default function FeedbackButtonToggle(props) {
   // const classes = useStyles();
 
   const type = "bool";
-  const { option1, option2, pId } = props;
+  const { option1, option2, pId, disabled } = props;
 
-  //   const [value, setValue] = React.useState(true);
   const { value, setValue } = props;
+  const disable = disabled || false;
 
   const name1 = option1 || "One";
   const name2 = option2 || "Two";
@@ -35,6 +35,7 @@ export default function FeedbackButtonToggle(props) {
         id="One"
         onClick={!value ? handleToggle : () => {}}
         color={value ? "primary" : "secondary"}
+        disabled={disable}
       >
         {name1}
       </Button>
@@ -42,6 +43,7 @@ export default function FeedbackButtonToggle(props) {
         id="Two"
         onClick={value ? handleToggle : () => {}}
         color={!value ? "primary" : "secondary"}
+        disabled={disable}
       >
         {name2}
       </Button>
