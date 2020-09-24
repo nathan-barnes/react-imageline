@@ -18,7 +18,8 @@ import InputManager from "./InputManager";
 // import staticParamData from "./ImageLinesParams";
 // import staticParamData from "./ImageLinesParams0454.json";
 import staticParamData from "./ImageLinesParams111.json";
-import ScreenCapButton from "./ScreenCapButton";
+import { undoAction, getApiValues, redoAction } from "./UndoRedo";
+// import ScreenCapButton from "./ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
@@ -209,6 +210,8 @@ export default function ShapeDiverLoad(props) {
     }
   }, []); //Empty Array here means this function will run once and will not update.
 
+  // update Parameter functions
+
   const updateParam = useCallback((value, id, type) => {
     // const { id, value, type } = evt.target;
     //where does "prev" come from?  How does it get populated with the correct data?
@@ -237,6 +240,34 @@ export default function ShapeDiverLoad(props) {
     );
   }, []);
 
+  //trying to replace/improve getters for nested components
+
+  const getParamName = (paramId) => {
+    try {
+      var name = paramDefs.find((p) => p.id === paramId).name;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found`);
+    } //add error handling, return error if caught
+    return name;
+  };
+
+  const getParamID = (paramName) => {
+    try {
+      var id = paramDefs.find((p) => p.name === paramName).id;
+    } catch (err) {
+      alert(err, `paramName ${paramName} not found`);
+    } //add error handling, return error if caught
+    return id;
+  };
+
+  const getParamValue = (paramId) => {
+    try {
+      var value = params.paramId;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found in params`);
+    } //add error handling, return error if caught
+    return value;
+  };
   /*
   This is meant to trigger on export events.  
   */
@@ -364,6 +395,20 @@ export default function ShapeDiverLoad(props) {
   //   setInfo(tempInfo);
   // };
 
+  const undoAndSync = () => {
+    if (undoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
+  const redoAndSync = () => {
+    if (redoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
 
@@ -435,6 +480,8 @@ export default function ShapeDiverLoad(props) {
                 // exports={exports}
                 resetPoints={resetPoints}
                 sdApi={sdApi}
+                undoAndSync={undoAndSync}
+                redoAndSync={redoAndSync}
               />
             ) : (
               <div />

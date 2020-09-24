@@ -19,17 +19,6 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import ZahnerLogo from "./ZahnerLogo";
 
-// import Waves from "@material-ui/icons/Waves";
-// import GraphicEq from "@material-ui/icons/GraphicEq";
-// import RotateRightIcon from "@material-ui/icons/RotateRight";
-
-// import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
-
-// import FeedbackSlider from "./FeedbackSlider";
-// import FeedbackButtonToggle from "./FeedbackButtonToggle";
-// import FeedbackImageUpload from "./FeedbackImageUpload";
-// import FeedbackSelect from "./FeedbackSelect";
-
 import ControlledAccordions from "./ControlledAccordions";
 
 import ImageMenu from "./ui-components/ImageMenu";
@@ -37,12 +26,7 @@ import LinesMenu from "./ui-components/LinesMenu";
 import ScopeMenu from "./ui-components/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
 import PerfMenu from "./ui-components/PerfMenu";
-import ScreenCapButton from "./ScreenCapButton";
 import TestMenu from "./ui-components/TestMenu";
-
-//replace this with call to SDApi when adding volatile data
-
-// import theme from "./MuiTheme";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -73,7 +57,6 @@ export default function InputManager(props) {
 
   const [bool1, setBool1] = useState(true);
 
-  // const [params, setParams] = useState({});
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
@@ -281,7 +264,7 @@ export default function InputManager(props) {
     {
       heading: "Test",
       subHeading: "Test Features",
-      children: <TestMenu {...props} />,
+      children: <TestMenu {...props} params={params} />,
     },
     // {
     //   heading: "Material",
