@@ -1,25 +1,26 @@
-# Create React App example
+#ImageLines App, for A. Zahner Co.
 
-## How to use
+language: Javascript/React 
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+for embedding in Wordpress Site
+see Product OneNote for development notes
 
-```sh
-curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2 material-ui-master/examples/create-react-app
-cd create-react-app
-```
+# Build instructions:
 
-Install it and run:
+Normal build and with npm start should work fine
 
-```sh
-npm install
-npm start
-```
+For inline file creation
 
-or:
+comment out public/index.html at line below (around line 27 sc script)
+	<script src="https://viewer.shapediver.com/v2/2.20.2/sdv.concat.min.js"></script>
+	
+Execute command: 
+	npm run build 
+	npx gulp
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/create-react-app)
+this will produce a new build folder in your directory. inside that build folder is a new index.html. open this file in a text editor and add back in the commented sd script. 
 
-## The idea behind the example
 
-This example demonstrates how you can use [Create React App](https://github.com/facebookincubator/create-react-app).
+this file is ready to be added to the wordPress page. 
+
+
