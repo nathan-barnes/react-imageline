@@ -7,6 +7,9 @@ import {
   Grid,
   Paper,
   Card,
+  // Button,
+  // Link,
+  IconButton,
   // CardContent,
   // Box,
   // Typography,
@@ -16,6 +19,17 @@ import InputManager from "./InputManager";
 // import staticParamData from "./ImageLinesParams";
 // import staticParamData from "./ImageLinesParams0454.json";
 import staticParamData from "./ImageLinesParams111.json";
+import {
+  undoAction,
+  getApiValues,
+  redoAction,
+  UndoButton,
+  RedoButton,
+} from "./UndoRedo";
+import Redo from "@material-ui/icons/Redo";
+import { TogglePerson } from "./TestSceneControls";
+import ScreenCapButton from "./ScreenCapButton";
+// import ScreenCapButton from "./ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
@@ -40,6 +54,10 @@ export default function ShapeDiverLoad(props) {
   const [paramDefs, setParamDefs] = useState({});
   const [params, setParams] = useState({});
   // const [exports, setExports] = useState({});
+
+  const editPaths = useRef();
+  const displayPaths = useRef();
+  const [editOn, setEditOn] = useState(false);
 
   //Trying to add history.  Don't know how yet
   // const [history, setHistory] = useState({});
@@ -149,12 +167,12 @@ export default function ShapeDiverLoad(props) {
 
             setParamDefs(parameters);
             setParams(currentParams);
-            console.log(
-              `api.parameters.get({name:"Points"}).data[0].data["points"]`,
-              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
-                "points"
-              ]
-            );
+            // console.log(
+            //   `api.parameters.get({name:"Points"}).data[0].data["points"]`,
+            //   JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
+            //     "points"
+            //   ]
+            // );
 
             sphPoints.current = JSON.parse(
               api.parameters.get({ name: "Points" }).data[0].value
@@ -172,11 +190,61 @@ export default function ShapeDiverLoad(props) {
           scene: {
             show: true,
             gridVisibility: false,
-            groundPlaneVisibility: true,
+            groundPlaneVisibility: false,
+            camera: {
+              zoomExtentsFactor: 0.95, //Factor to apply to the bounding box before zooming to extents
+              autoAdjust: true, //Enable / disable that the camera adjusts to geometry updates
+              controls: {
+                orbit: {
+                  restrictions: {
+                    rotation: {
+                      minPolarAngle: -90,
+                      maxPolarAngle: 90,
+                      minAzimuthAngle: -90,
+                      maxAzimuthAngle: 90,
+                    },
+                  },
+                },
+              },
+            },
           },
         };
 
         await api.updateSettingsAsync(sceneSettings);
+
+        // This section all about api display of geometry.  Goal is to show/hide edit mode using api instead of param call to gh
+
+        // const editGeoFilters = [
+        //   "Sphere",
+        //   "Tweens",
+        //   "GuideCrvs",
+        //   "ImageDisplay",
+        // ];
+        // const displayGeoFilters = ["Person", "PatternGeo"];
+
+        // const editGeoPaths = api.scene
+        //   .get(null, "CommPlugin_1")
+        //   .data.filter(
+        //     (p) =>
+        //       editGeoFilters.includes(p.name.split("_")[0]) &&
+        //       p.hasOwnProperty("bbmin")
+        //   )
+        //   .map((q) => q.scenePath);
+
+        // editPaths.current = editGeoPaths;
+
+        // const displayGeoPaths = api.scene
+        //   .get(null, "CommPlugin_1")
+        //   .data.filter(
+        //     (p) =>
+        //       displayGeoFilters.includes(p.name.split("_")[0]) &&
+        //       p.hasOwnProperty("bbmin")
+        //   )
+        //   .map((q) => q.scenePath);
+
+        // displayPaths.current = displayGeoPaths;
+
+        // api.scene.toggleGeometry([...displayGeoFilters], [...editGeoPaths]);
       }
       loadApi().then(() => {
         api.scene.updateInteractionGroups(sphereGroup);
@@ -187,13 +255,13 @@ export default function ShapeDiverLoad(props) {
         for (let assetnum in sphereAssets) {
           let asset = sphereAssets[assetnum];
           // console.log(`asset: ${JSON.stringify(asset)}`);
-          let updateObject = {
-            id: asset.id,
-            duration: 0,
-          };
           if (asset.name.includes("Sphere_")) {
-            updateObject.interactionGroup = sphereGroup.id;
-            updateObject.name = asset.name;
+            let updateObject = {
+              id: asset.id,
+              duration: 0,
+              interactionGroup: sphereGroup.id,
+              name: asset.name,
+            };
             updateObjects.push(updateObject);
           }
         }
@@ -205,6 +273,8 @@ export default function ShapeDiverLoad(props) {
       });
     }
   }, []); //Empty Array here means this function will run once and will not update.
+
+  // update Parameter functions
 
   const updateParam = useCallback((value, id, type) => {
     // const { id, value, type } = evt.target;
@@ -222,6 +292,8 @@ export default function ShapeDiverLoad(props) {
         .then(function (result) {
           sdApi.current.scene.camera.zoomAsync();
         });
+      //This is where logging goes.  also add log of errors/failed calls to api
+      //Also add log entry in updatePoints()
       console.log("id, value, type: ", id, value, type);
     }
   }, []);
@@ -232,6 +304,34 @@ export default function ShapeDiverLoad(props) {
     );
   }, []);
 
+  //trying to replace/improve getters for nested components
+
+  const getParamName = (paramId) => {
+    try {
+      var name = paramDefs.find((p) => p.id === paramId).name;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found`);
+    } //add error handling, return error if caught
+    return name;
+  };
+
+  const getParamID = (paramName) => {
+    try {
+      var id = paramDefs.find((p) => p.name === paramName).id;
+    } catch (err) {
+      alert(err, `paramName ${paramName} not found`);
+    } //add error handling, return error if caught
+    return id;
+  };
+
+  const getParamValue = (paramId) => {
+    try {
+      var value = params.paramId;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found in params`);
+    } //add error handling, return error if caught
+    return value;
+  };
   /*
   This is meant to trigger on export events.  
   */
@@ -258,30 +358,14 @@ export default function ShapeDiverLoad(props) {
   // More on selectable points:
   const dragCallback = (event) => {
     const sphereID = event.scenePath.split(".")[1];
-    console.log("sphereId: ", sphereID);
+    // console.log("sphereId: ", sphereID);
 
-    // const sphereAsset = sdApi.current.scene.get(
-    //   {
-    //     id: sphereID,
-    //   },
-    //   "CommPlugin_1"
-    // );
     const selectedSph = sphereRefs.current
       .find((ref) => ref.id === sphereID)
       .name.split("_")[1];
-    // const selectedSph = sphereAsset.data[0].name.split("_")[1];
-
-    console.log(
-      "selected Sph: ",
-      selectedSph
-      // "\nlocalSph: ",
-      // localselectedSph
-    );
-
-    // setSelectedSphere(selectedSph);
 
     const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
-    console.log("tFormName ", tFormName);
+    // console.log("tFormName ", tFormName);
 
     const tForm = getDataByName(tFormName);
 
@@ -375,6 +459,29 @@ export default function ShapeDiverLoad(props) {
   //   setInfo(tempInfo);
   // };
 
+  const undoAndSync = () => {
+    if (undoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
+  const redoAndSync = () => {
+    if (redoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
+  const toggleEditMode = () => {
+    const toShow = editOn
+      ? [editPaths, displayPaths]
+      : [displayPaths, editPaths];
+
+    sdApi.current.scene.toggleGeometry(...toShow);
+    setEditOn(!editOn);
+  };
+
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
 
@@ -390,36 +497,70 @@ export default function ShapeDiverLoad(props) {
         <Grid item xs={12} md={8}>
           {/* <!-- ShapeDiver Viewer Main Container --> */}
           {liveLink ? (
-            <Paper
-              color="secondary"
-              variant="outlined"
+            <div
               style={{
                 width: "100%",
                 height: "100%",
                 minHeight: 600,
                 maxHeight: 800,
                 flexShrink: 3,
+                // position: "sticky",
               }}
             >
-              <div
-                // className={classes.ShapediverContainer}
-                id="sdv-container"
-                ref={containerSD}
+              <Paper
+                color="secondary"
+                variant="outlined"
                 style={{
-                  position: "inherit",
-                  //sticky may allow it to stay at the top when scrolling
-                  top: "5%",
-                  bottom: "5%",
-                  height: "99%",
-                  width: "90",
-                  right: "5%",
-                  left: "5%",
-                  // flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 600,
+                  maxHeight: 600,
+                  flexShrink: 3,
+                  // position: "sticky",
                 }}
-              />
-            </Paper>
+              >
+                <div
+                  // className={classes.ShapediverContainer}
+                  id="sdv-container"
+                  ref={containerSD}
+                  style={{
+                    position: "relative",
+                    //sticky may allow it to stay at the top when scrolling
+                    // top: "5%",
+                    // bottom: "5%",
+                    height: "99%",
+                    width: "90",
+                    // right: "5%",
+                    // left: "5%",
+                    // flex: 1,
+                  }}
+                />
+              </Paper>
+              <div
+                style={{
+                  position: "relative",
+                  bottom: 600,
+                  left: 25,
+                  zIndex: 10,
+                  marginBottom: "-50px",
+                }}
+              >
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />{" "}
+                <TogglePerson sdApi={sdApi} />
+                <ScreenCapButton sdApi={sdApi} />
+              </div>
+            </div>
           ) : (
             <Card>
+              <div
+                style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
+              >
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />
+                <TogglePerson sdApi={sdApi} />
+                <ScreenCapButton sdApi={sdApi} />
+              </div>
               <Paper
                 color="secondary"
                 variant="outlined"
@@ -430,7 +571,23 @@ export default function ShapeDiverLoad(props) {
                   maxHeight: 800,
                   flexShrink: 3,
                 }}
-              ></Paper>
+              />
+
+              {/* <Paper
+                color="secondary"
+                variant="outlined"
+                style={{
+                  position: "sticky",
+                  width: "100%",
+                  // minHeight: 600,
+                  height: "100%",
+                  // maxWidth: 600,
+                  minWidth: 200,
+                  minHeight: 200,
+                  height: "100%",
+                  margintop: "75%",
+              />
+                }} */}
             </Card>
           )}
         </Grid>
@@ -445,12 +602,17 @@ export default function ShapeDiverLoad(props) {
                 params={params}
                 // exports={exports}
                 resetPoints={resetPoints}
+                sdApi={sdApi}
+                // undoAndSync={undoAndSync}
+                // redoAndSync={redoAndSync}
+                toggleEditMode={toggleEditMode}
               />
             ) : (
               <div />
             )}
           </div>
         </Grid>
+        <Grid item xs={12}></Grid>
       </Grid>
     </div>
   );

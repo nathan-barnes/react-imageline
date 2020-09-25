@@ -10,6 +10,7 @@ import {
   // Grid,
   Paper,
   Typography,
+  Grid,
   // Card,
   // CardHeader,
   // CardMedia,
@@ -19,17 +20,6 @@ import {
 import { makeStyles } from "@material-ui/styles";
 import ZahnerLogo from "./ZahnerLogo";
 
-// import Waves from "@material-ui/icons/Waves";
-// import GraphicEq from "@material-ui/icons/GraphicEq";
-// import RotateRightIcon from "@material-ui/icons/RotateRight";
-
-// import { WidthIcon, HeightIcon, AmplitudeIcon } from "./DimIcons";
-
-// import FeedbackSlider from "./FeedbackSlider";
-// import FeedbackButtonToggle from "./FeedbackButtonToggle";
-// import FeedbackImageUpload from "./FeedbackImageUpload";
-// import FeedbackSelect from "./FeedbackSelect";
-
 import ControlledAccordions from "./ControlledAccordions";
 
 import ImageMenu from "./ui-components/ImageMenu";
@@ -37,10 +27,9 @@ import LinesMenu from "./ui-components/LinesMenu";
 import ScopeMenu from "./ui-components/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
 import PerfMenu from "./ui-components/PerfMenu";
-
-//replace this with call to SDApi when adding volatile data
-
-// import theme from "./MuiTheme";
+import TestMenu from "./ui-components/TestMenu";
+import ScreenCapButton from "./ScreenCapButton";
+import { UndoButton, RedoButton } from "./UndoRedo";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -71,7 +60,6 @@ export default function InputManager(props) {
 
   const [bool1, setBool1] = useState(true);
 
-  // const [params, setParams] = useState({});
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
@@ -81,6 +69,7 @@ export default function InputManager(props) {
     updateParams,
     updateParamNoSD,
     resetPoints,
+    sdApi,
   } = props;
 
   // console.log(
@@ -240,8 +229,8 @@ export default function InputManager(props) {
         " deg",
       children: (
         <LinesMenu
-          getProps={getProps}
           getValue={getValue}
+          getProps={getProps}
           resetPoints={resetPoints}
         />
       ),
@@ -251,8 +240,9 @@ export default function InputManager(props) {
       subHeading:
         params[paramIds["Lines: Perf per Ft of Line"]] +
         " Max Perforations/ft @ " +
-        params[paramIds["Lines: Stroke%ofMax"]] +
-        "% Stroke",
+        (getValue("Lines: Stroke%ofMax") > 0 ? "+" : "") +
+        getValue("Lines: Stroke%ofMax") +
+        "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
       disabled: params[paramIds["Waves: EditModeOn"]],
     },
@@ -275,6 +265,11 @@ export default function InputManager(props) {
         />
       ),
     },
+    // {
+    //   heading: "Test",
+    //   subHeading: "Test Features",
+    //   children: <TestMenu {...props} params={params} />,
+    // },
     // {
     //   heading: "Material",
     //   subHeading:
@@ -329,6 +324,17 @@ export default function InputManager(props) {
             </a>{" "}
             <strong>{"  ImageLines"}</strong>
           </Typography>
+          {/* <Grid container spacing={0} justify="center">
+            <Grid item xs={2}>
+              <UndoButton {...props} />
+            </Grid>
+            <Grid item xs={5}>
+              <ScreenCapButton {...props} />
+            </Grid>
+            <Grid item xs={2}>
+              <RedoButton {...props} />
+            </Grid>
+          </Grid> */}
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>
         {/* </div>
