@@ -11,7 +11,7 @@ import RotateRightIcon from "@material-ui/icons/RotateRight";
 // import { AmplitudeIcon } from "../DimIcons";
 
 export default function LinesMenu(props) {
-  const { getProps, getValue, resetPoints } = props;
+  const { getProps, getValue, resetPoints, toggleEditMode } = props;
   return (
     <div>
       <Grid
@@ -97,7 +97,7 @@ export default function LinesMenu(props) {
           {/* xs={6} md={12} lg={6}> */}
           <FeedbackButtonToggle
             option1="Edit Mode"
-            option2="Perf Mode"
+            option2="Preview Mode"
             {...getProps("Waves: EditModeOn")}
             disabled={getValue("Waves: Lines/Waves") ? false : true}
           />

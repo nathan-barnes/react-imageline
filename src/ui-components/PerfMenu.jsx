@@ -7,6 +7,8 @@ import FeedbackSlider from "../FeedbackSlider";
 // import Waves from "@material-ui/icons/Waves";
 import GraphicEq from "@material-ui/icons/GraphicEq";
 // import RotateRightIcon from "@material-ui/icons/RotateRight";
+// import BrightnessMediumIcon from "@material-ui/icons/BrightnessMedium";
+import ViewListIcon from "@material-ui/icons/ViewList";
 
 // import { AmplitudeIcon } from "../DimIcons";
 
@@ -27,9 +29,9 @@ export default function PerfMenu(props) {
         </Grid>
         <Grid item xs={12}>
           <FeedbackSlider
-            label={"Stroke (%) - Modify Openness"}
+            label={"Modify Openness"}
             {...getProps("Lines: Stroke%ofMax")}
-            // icon={RotateRightIcon}
+            icon={ViewListIcon}
           />
         </Grid>
       </Grid>

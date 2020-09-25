@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Button } from "@material-ui/core";
-import Image from "@material-ui/icons/Image";
+import { IconButton } from "@material-ui/core";
+import CameraAltIcon from "@material-ui/icons/CameraAlt";
+import ToolTip from "@material-ui/core/Tooltip";
 
 export default function ScreenCapButton(props) {
   const { sdApi } = props;
@@ -10,19 +11,20 @@ export default function ScreenCapButton(props) {
     const imageURI = sdApi.current.scene.getScreenshot();
     console.log("imageURI: ", imageURI, imageURI.toString());
     const link = document.createElement("a");
-    link.download = "ScreenshotName";
+    link.download = "Zahner-ImageLines";
     link.href = imageURI;
     link.click();
   };
 
   return (
-    <Button
-      variant="contained"
-      color="secondary"
-      onClick={onClick}
-      startIcon={<Image />}
-    >
-      Download Screenshot
-    </Button>
+    <ToolTip title="screenshot" arrow>
+      <IconButton
+        aria-label="download ScreenShot"
+        //   color="secondary"
+        onClick={onClick}
+      >
+        <CameraAltIcon />
+      </IconButton>
+    </ToolTip>
   );
 }

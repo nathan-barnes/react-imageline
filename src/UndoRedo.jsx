@@ -43,7 +43,7 @@ function syncParams(setParams, newParams) {
 export function UndoButton(props) {
   const { undoAndSync } = props;
   return (
-    <Tooltip title="Undo">
+    <Tooltip title="Undo" arrow>
       <IconButton
         aria-label="Undo"
         //   variant="contained"
@@ -60,7 +60,7 @@ export function RedoButton(props) {
   const { redoAndSync } = props;
 
   return (
-    <Tooltip title="Redo">
+    <Tooltip title="Redo" arrow>
       <IconButton
         aria-label="Redo"
         //   variant="contained"

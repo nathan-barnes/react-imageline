@@ -4,6 +4,7 @@ import { Button, IconButton } from "@material-ui/core";
 import { useState } from "react";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import Donut from "react-dial-knob";
 
 export function TogglePerson(props) {
   const [showState, setShowState] = useState(false);
@@ -107,5 +108,14 @@ export function ToggleView(props) {
     <Button onClick={setToFront} onDoubleClick={setToPerspective}>
       Front/Perspective
     </Button>
+  );
+}
+
+export function EditModeToggle(props) {
+  return (
+    <IconButton
+      aria-label="Edit Mode"
+      onClick={props.toggleEditMode}
+    ></IconButton>
   );
 }

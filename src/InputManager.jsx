@@ -229,8 +229,8 @@ export default function InputManager(props) {
         " deg",
       children: (
         <LinesMenu
-          getProps={getProps}
           getValue={getValue}
+          getProps={getProps}
           resetPoints={resetPoints}
         />
       ),
@@ -240,8 +240,9 @@ export default function InputManager(props) {
       subHeading:
         params[paramIds["Lines: Perf per Ft of Line"]] +
         " Max Perforations/ft @ " +
-        params[paramIds["Lines: Stroke%ofMax"]] +
-        "% Stroke",
+        (getValue("Lines: Stroke%ofMax") > 0 ? "+" : "") +
+        getValue("Lines: Stroke%ofMax") +
+        "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
       disabled: params[paramIds["Waves: EditModeOn"]],
     },
@@ -264,11 +265,11 @@ export default function InputManager(props) {
         />
       ),
     },
-    {
-      heading: "Test",
-      subHeading: "Test Features",
-      children: <TestMenu {...props} params={params} />,
-    },
+    // {
+    //   heading: "Test",
+    //   subHeading: "Test Features",
+    //   children: <TestMenu {...props} params={params} />,
+    // },
     // {
     //   heading: "Material",
     //   subHeading:

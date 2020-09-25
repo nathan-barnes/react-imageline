@@ -28,6 +28,7 @@ import {
 } from "./UndoRedo";
 import Redo from "@material-ui/icons/Redo";
 import { TogglePerson } from "./TestSceneControls";
+import ScreenCapButton from "./ScreenCapButton";
 // import ScreenCapButton from "./ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
@@ -53,6 +54,10 @@ export default function ShapeDiverLoad(props) {
   const [paramDefs, setParamDefs] = useState({});
   const [params, setParams] = useState({});
   // const [exports, setExports] = useState({});
+
+  const editPaths = useRef();
+  const displayPaths = useRef();
+  const [editOn, setEditOn] = useState(false);
 
   //Trying to add history.  Don't know how yet
   // const [history, setHistory] = useState({});
@@ -188,6 +193,7 @@ export default function ShapeDiverLoad(props) {
             groundPlaneVisibility: false,
             camera: {
               zoomExtentsFactor: 0.95, //Factor to apply to the bounding box before zooming to extents
+              autoAdjust: true, //Enable / disable that the camera adjusts to geometry updates
               controls: {
                 orbit: {
                   restrictions: {
@@ -205,6 +211,40 @@ export default function ShapeDiverLoad(props) {
         };
 
         await api.updateSettingsAsync(sceneSettings);
+
+        // This section all about api display of geometry.  Goal is to show/hide edit mode using api instead of param call to gh
+
+        // const editGeoFilters = [
+        //   "Sphere",
+        //   "Tweens",
+        //   "GuideCrvs",
+        //   "ImageDisplay",
+        // ];
+        // const displayGeoFilters = ["Person", "PatternGeo"];
+
+        // const editGeoPaths = api.scene
+        //   .get(null, "CommPlugin_1")
+        //   .data.filter(
+        //     (p) =>
+        //       editGeoFilters.includes(p.name.split("_")[0]) &&
+        //       p.hasOwnProperty("bbmin")
+        //   )
+        //   .map((q) => q.scenePath);
+
+        // editPaths.current = editGeoPaths;
+
+        // const displayGeoPaths = api.scene
+        //   .get(null, "CommPlugin_1")
+        //   .data.filter(
+        //     (p) =>
+        //       displayGeoFilters.includes(p.name.split("_")[0]) &&
+        //       p.hasOwnProperty("bbmin")
+        //   )
+        //   .map((q) => q.scenePath);
+
+        // displayPaths.current = displayGeoPaths;
+
+        // api.scene.toggleGeometry([...displayGeoFilters], [...editGeoPaths]);
       }
       loadApi().then(() => {
         api.scene.updateInteractionGroups(sphereGroup);
@@ -433,6 +473,15 @@ export default function ShapeDiverLoad(props) {
     }
   };
 
+  const toggleEditMode = () => {
+    const toShow = editOn
+      ? [editPaths, displayPaths]
+      : [displayPaths, editPaths];
+
+    sdApi.current.scene.toggleGeometry(...toShow);
+    setEditOn(!editOn);
+  };
+
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
 
@@ -496,9 +545,10 @@ export default function ShapeDiverLoad(props) {
                   marginBottom: "-50px",
                 }}
               >
-                <UndoButton sdApi={undoAndSync} />
-                <RedoButton sdApi={redoAndSync} />{" "}
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />{" "}
                 <TogglePerson sdApi={sdApi} />
+                <ScreenCapButton sdApi={sdApi} />
               </div>
             </div>
           ) : (
@@ -506,8 +556,10 @@ export default function ShapeDiverLoad(props) {
               <div
                 style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
               >
-                <UndoButton sdApi={sdApi} />
-                <RedoButton sdApi={sdApi} /> <TogglePerson sdApi={sdApi} />
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />
+                <TogglePerson sdApi={sdApi} />
+                <ScreenCapButton sdApi={sdApi} />
               </div>
               <Paper
                 color="secondary"
@@ -551,8 +603,9 @@ export default function ShapeDiverLoad(props) {
                 // exports={exports}
                 resetPoints={resetPoints}
                 sdApi={sdApi}
-                undoAndSync={undoAndSync}
-                redoAndSync={redoAndSync}
+                // undoAndSync={undoAndSync}
+                // redoAndSync={redoAndSync}
+                toggleEditMode={toggleEditMode}
               />
             ) : (
               <div />
