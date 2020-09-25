@@ -7,8 +7,9 @@ import {
   Grid,
   Paper,
   Card,
-  Button,
-  Link,
+  // Button,
+  // Link,
+  IconButton,
   // CardContent,
   // Box,
   // Typography,
@@ -18,7 +19,15 @@ import InputManager from "./InputManager";
 // import staticParamData from "./ImageLinesParams";
 // import staticParamData from "./ImageLinesParams0454.json";
 import staticParamData from "./ImageLinesParams111.json";
-import { undoAction, getApiValues, redoAction } from "./UndoRedo";
+import {
+  undoAction,
+  getApiValues,
+  redoAction,
+  UndoButton,
+  RedoButton,
+} from "./UndoRedo";
+import Redo from "@material-ui/icons/Redo";
+import { TogglePerson } from "./TestSceneControls";
 // import ScreenCapButton from "./ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
@@ -176,7 +185,22 @@ export default function ShapeDiverLoad(props) {
           scene: {
             show: true,
             gridVisibility: false,
-            groundPlaneVisibility: true,
+            groundPlaneVisibility: false,
+            camera: {
+              zoomExtentsFactor: 0.95, //Factor to apply to the bounding box before zooming to extents
+              controls: {
+                orbit: {
+                  restrictions: {
+                    rotation: {
+                      minPolarAngle: -90,
+                      maxPolarAngle: 90,
+                      minAzimuthAngle: -90,
+                      maxAzimuthAngle: 90,
+                    },
+                  },
+                },
+              },
+            },
           },
         };
 
@@ -424,36 +448,67 @@ export default function ShapeDiverLoad(props) {
         <Grid item xs={12} md={8}>
           {/* <!-- ShapeDiver Viewer Main Container --> */}
           {liveLink ? (
-            <Paper
-              color="secondary"
-              variant="outlined"
+            <div
               style={{
                 width: "100%",
                 height: "100%",
                 minHeight: 600,
                 maxHeight: 800,
                 flexShrink: 3,
+                // position: "sticky",
               }}
             >
-              <div
-                // className={classes.ShapediverContainer}
-                id="sdv-container"
-                ref={containerSD}
+              <Paper
+                color="secondary"
+                variant="outlined"
                 style={{
-                  position: "inherit",
-                  //sticky may allow it to stay at the top when scrolling
-                  top: "5%",
-                  bottom: "5%",
-                  height: "99%",
-                  width: "90",
-                  right: "5%",
-                  left: "5%",
-                  // flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 600,
+                  maxHeight: 600,
+                  flexShrink: 3,
+                  // position: "sticky",
                 }}
-              />
-            </Paper>
+              >
+                <div
+                  // className={classes.ShapediverContainer}
+                  id="sdv-container"
+                  ref={containerSD}
+                  style={{
+                    position: "relative",
+                    //sticky may allow it to stay at the top when scrolling
+                    // top: "5%",
+                    // bottom: "5%",
+                    height: "99%",
+                    width: "90",
+                    // right: "5%",
+                    // left: "5%",
+                    // flex: 1,
+                  }}
+                />
+              </Paper>
+              <div
+                style={{
+                  position: "relative",
+                  bottom: 600,
+                  left: 25,
+                  zIndex: 10,
+                  marginBottom: "-50px",
+                }}
+              >
+                <UndoButton sdApi={undoAndSync} />
+                <RedoButton sdApi={redoAndSync} />{" "}
+                <TogglePerson sdApi={sdApi} />
+              </div>
+            </div>
           ) : (
             <Card>
+              <div
+                style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
+              >
+                <UndoButton sdApi={sdApi} />
+                <RedoButton sdApi={sdApi} /> <TogglePerson sdApi={sdApi} />
+              </div>
               <Paper
                 color="secondary"
                 variant="outlined"
@@ -464,7 +519,23 @@ export default function ShapeDiverLoad(props) {
                   maxHeight: 800,
                   flexShrink: 3,
                 }}
-              ></Paper>
+              />
+
+              {/* <Paper
+                color="secondary"
+                variant="outlined"
+                style={{
+                  position: "sticky",
+                  width: "100%",
+                  // minHeight: 600,
+                  height: "100%",
+                  // maxWidth: 600,
+                  minWidth: 200,
+                  minHeight: 200,
+                  height: "100%",
+                  margintop: "75%",
+              />
+                }} */}
             </Card>
           )}
         </Grid>

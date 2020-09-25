@@ -10,9 +10,7 @@ export default function TestMenu(props) {
       <ScreenCapButton {...props} />
       <p />
       <UndoButton {...props} />
-      <p />
       <RedoButton {...props} />
-      <p />
       <TogglePerson {...props} />
       <p />
       <ToggleDrivers {...props} />

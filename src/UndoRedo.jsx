@@ -1,7 +1,8 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import Undo from "@material-ui/icons/Undo";
 import Redo from "@material-ui/icons/Redo";
+import Tooltip from "@material-ui/core/Tooltip";
 
 export function undoAction(sdApi) {
   if (sdApi.current.parameters.canGoBackInHistory()) {
@@ -42,14 +43,16 @@ function syncParams(setParams, newParams) {
 export function UndoButton(props) {
   const { undoAndSync } = props;
   return (
-    <Button
-      variant="contained"
-      //   onClick={() => undoAction({ ...props })}
-      onClick={undoAndSync}
-      startIcon={<Undo />}
-    >
-      UNDO
-    </Button>
+    <Tooltip title="Undo">
+      <IconButton
+        aria-label="Undo"
+        //   variant="contained"
+        //   onClick={() => undoAction({ ...props })}
+        onClick={undoAndSync}
+      >
+        <Undo />
+      </IconButton>
+    </Tooltip>
   );
 }
 
@@ -57,13 +60,15 @@ export function RedoButton(props) {
   const { redoAndSync } = props;
 
   return (
-    <Button
-      variant="contained"
-      //   onClick={() => redoAction()}
-      onClick={redoAndSync}
-      startIcon={<Redo />}
-    >
-      REDO
-    </Button>
+    <Tooltip title="Redo">
+      <IconButton
+        aria-label="Redo"
+        //   variant="contained"
+        //   onClick={() => redoAction()}
+        onClick={redoAndSync}
+      >
+        <Redo />
+      </IconButton>
+    </Tooltip>
   );
 }

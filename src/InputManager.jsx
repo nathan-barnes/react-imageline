@@ -10,6 +10,7 @@ import {
   // Grid,
   Paper,
   Typography,
+  Grid,
   // Card,
   // CardHeader,
   // CardMedia,
@@ -27,6 +28,8 @@ import ScopeMenu from "./ui-components/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
 import PerfMenu from "./ui-components/PerfMenu";
 import TestMenu from "./ui-components/TestMenu";
+import ScreenCapButton from "./ScreenCapButton";
+import { UndoButton, RedoButton } from "./UndoRedo";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -320,6 +323,17 @@ export default function InputManager(props) {
             </a>{" "}
             <strong>{"  ImageLines"}</strong>
           </Typography>
+          {/* <Grid container spacing={0} justify="center">
+            <Grid item xs={2}>
+              <UndoButton {...props} />
+            </Grid>
+            <Grid item xs={5}>
+              <ScreenCapButton {...props} />
+            </Grid>
+            <Grid item xs={2}>
+              <RedoButton {...props} />
+            </Grid>
+          </Grid> */}
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>
         {/* </div>

@@ -1,11 +1,14 @@
 import React from "react";
 
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import { useState } from "react";
+import PersonIcon from "@material-ui/icons/Person";
+import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 
 export function TogglePerson(props) {
   const [showState, setShowState] = useState(false);
   const { sdApi } = props;
+  const editMode = props.editMode || false;
 
   const getPerson = () => {
     return sdApi.current.scene
@@ -23,9 +26,16 @@ export function TogglePerson(props) {
     setShowState(!showState);
   };
 
-  return <Button onClick={togglePerson}>Toggle Person</Button>;
+  return (
+    <IconButton onClick={togglePerson}>
+      {showState || editMode ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
+    </IconButton>
+  );
 }
 
+//refactor at some point, initializing the show state in the initial parameters.
+//create two groups - Preview and EditMode
+//toggle the state of each group when the toggle button is activated.
 export function ToggleDrivers(props) {
   const [showState, setShowState] = useState(false);
   const { sdApi } = props;
@@ -43,14 +53,14 @@ export function ToggleDrivers(props) {
   };
 
   //probably should consider storing these with useRef or useState
-  const getPanels = () => {
-    const assets = showState
-      ? sdApi.current.scene
-          .get({ name: "PanelBounds" }, "CommPlugin_1")
-          .data.filter((p) => p.hasOwnProperty("bbmax"))[0].scenePath
-      : null;
-    return assets;
-  };
+  //   const getPanels = () => {
+  //     const assets = showState
+  //       ? sdApi.current.scene
+  //           .get({ name: "PanelBounds" }, "CommPlugin_1")
+  //           .data.filter((p) => p.hasOwnProperty("bbmax"))[0].scenePath
+  //       : null;
+  //     return assets;
+  //   };
 
   const toggleDrivers = () => {
     try {
