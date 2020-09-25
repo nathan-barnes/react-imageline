@@ -3,33 +3,21 @@ import React, { useCallback, useRef, useEffect, useState } from "react";
 
 // import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
-import {
-  Grid,
-  Paper,
-  Card,
-  // Button,
-  // Link,
-  IconButton,
-  // CardContent,
-  // Box,
-  // Typography,
-} from "@material-ui/core";
+import { Grid, Paper, Card } from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
 // import staticParamData from "./ImageLinesParams";
 // import staticParamData from "./ImageLinesParams0454.json";
-import staticParamData from "./ImageLinesParams111.json";
+import staticParamData from "./static/ImageLinesParams111.json";
 import {
   undoAction,
   getApiValues,
   redoAction,
   UndoButton,
   RedoButton,
-} from "./UndoRedo";
-import Redo from "@material-ui/icons/Redo";
-import { TogglePerson } from "./TestSceneControls";
-import ScreenCapButton from "./ScreenCapButton";
-// import ScreenCapButton from "./ScreenCapButton";
+} from "./components-special/UndoRedo";
+import { TogglePerson } from "./components-special/TogglePerson";
+import ScreenCapButton from "./components-special/ScreenCapButton";
 
 // goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
 // goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
@@ -193,7 +181,7 @@ export default function ShapeDiverLoad(props) {
             groundPlaneVisibility: false,
             camera: {
               zoomExtentsFactor: 0.95, //Factor to apply to the bounding box before zooming to extents
-              autoAdjust: true, //Enable / disable that the camera adjusts to geometry updates
+              autoAdjust: true, //git commEnable / disable that the camera adjusts to geometry updates
               controls: {
                 orbit: {
                   restrictions: {

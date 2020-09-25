@@ -1,5 +1,5 @@
 import React from "react";
-import FeedbackSelect from "../FeedbackSelect";
+import FeedbackSelect from "../components-generic/FeedbackSelect";
 
 export default function MaterialMenu(props) {
   const {

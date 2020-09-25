@@ -1,35 +1,17 @@
 import React from "react";
-import {
-  useState,
-  useEffect,
-  // useCallback
-} from "react";
-
-import {
-  //   Button,
-  // Grid,
-  Paper,
-  Typography,
-  Grid,
-  // Card,
-  // CardHeader,
-  // CardMedia,
-  // CardContent,
-  // Select,
-} from "@material-ui/core";
+import { useState, useEffect } from "react";
+import { Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import ZahnerLogo from "./ZahnerLogo";
+import ZahnerLogo from "./static/ZahnerLogo";
 
-import ControlledAccordions from "./ControlledAccordions";
+import ControlledAccordions from "./components-generic/ControlledAccordions";
 
-import ImageMenu from "./ui-components/ImageMenu";
-import LinesMenu from "./ui-components/LinesMenu";
-import ScopeMenu from "./ui-components/ScopeMenu";
+import ImageMenu from "./ui-menus/ImageMenu";
+import LinesMenu from "./ui-menus/LinesMenu";
+import ScopeMenu from "./ui-menus/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
-import PerfMenu from "./ui-components/PerfMenu";
-import TestMenu from "./ui-components/TestMenu";
-import ScreenCapButton from "./ScreenCapButton";
-import { UndoButton, RedoButton } from "./UndoRedo";
+import PerfMenu from "./ui-menus/PerfMenu";
+// import TestMenu from "./ui-components/TestMenu";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established

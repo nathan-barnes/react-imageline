@@ -2,9 +2,9 @@ import React from "react";
 import { Grid, Typography } from "@material-ui/core";
 
 // import FeedbackButtonToggle from "../FeedbackButtonToggle";
-import FeedbackSlider from "../FeedbackSlider";
+import FeedbackSlider from "../components-generic/FeedbackSlider";
 
-import { WidthIcon, HeightIcon } from "../DimIcons";
+import { WidthIcon, HeightIcon } from "../static/DimIcons";
 
 export default function ScopeMenu(props) {
   const {

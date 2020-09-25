@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Button } from "@material-ui/core";
 
-import FeedbackButtonToggle from "../FeedbackButtonToggle";
-import FeedbackSlider from "../FeedbackSlider";
+import FeedbackButtonToggle from "../components-generic/FeedbackButtonToggle";
+import FeedbackSlider from "../components-generic/FeedbackSlider";
 
 import Waves from "@material-ui/icons/Waves";
 // import GraphicEq from "@material-ui/icons/GraphicEq";

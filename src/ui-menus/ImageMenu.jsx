@@ -1,6 +1,6 @@
 import React from "react";
-import FeedbackImageUpload from "../FeedbackImageUpload";
-import FeedbackButtonToggle from "../FeedbackButtonToggle";
+import FeedbackImageUpload from "../components-generic/FeedbackImageUpload";
+import FeedbackButtonToggle from "../components-generic/FeedbackButtonToggle";
 
 export default function ImageMenu(props) {
   const { getProps } = props;

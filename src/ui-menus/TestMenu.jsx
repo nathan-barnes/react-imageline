@@ -1,14 +1,12 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
-import ScreenCapButton from "../ScreenCapButton";
-import { UndoButton, RedoButton } from "../UndoRedo";
+import ScreenCapButton from "../components-special/ScreenCapButton";
+import { UndoButton, RedoButton } from "../components-special/UndoRedo";
 import {
-  TogglePerson,
+  //   TogglePerson,
   ToggleDrivers,
   ToggleView,
-  MyDonut,
-} from "../TestSceneControls";
-import { Donut } from "react-dial-knob";
+} from "../components-special/TestSceneControls";
 
 export default function TestMenu(props) {
   return (
