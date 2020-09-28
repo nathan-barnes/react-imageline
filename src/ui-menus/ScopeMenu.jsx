@@ -7,10 +7,7 @@ import FeedbackSlider from "../components-generic/FeedbackSlider";
 import { WidthIcon, HeightIcon } from "../static/DimIcons";
 
 export default function ScopeMenu(props) {
-  const {
-    getProps,
-    // getValue, setBool1, bool1
-  } = props;
+  const { getProps } = props;
   return (
     <div>
       <Grid container>
