@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 // import { makeStyles } from "@material-ui/styles";
+import asyncLogParams from './logging-components/firebaseRealtime';
+
 
 // import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
@@ -221,7 +223,8 @@ export default function ShapeDiverLoad(props) {
         .updateAsync({ id, value })
         .then(function (result) {
           sdApi.current.scene.camera.zoomAsync();
-        });
+        })
+        .then(asyncLogParams(id, value));
       console.log("id, value, type: ", id, value, type);
     }
   }, []);

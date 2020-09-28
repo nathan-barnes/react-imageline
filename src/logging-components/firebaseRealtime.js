@@ -21,18 +21,16 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-//sudo unique ID for session. replace with something better idealy IP
-const userIp =  'xyz';
-
-//  asyncGetIp().then(value => console.log(value))
-
-// console.log(ip);
-
+//helper functions
 async function asyncToString(string) {
     const regex = /\./g;
     const result = await string.replace(regex, '-');
     return result;
 }
+
+//sudo unique ID for session
+
+
 
 function makeid(length) {
     var result           = '';
@@ -56,47 +54,65 @@ database.push();
 //fix for Json replace variables
 var counter = 0
 
+
+
+
 async function asyncLogParams(id, value) {
 
     //get user IP and format to nice string
     var temp = await asyncGetIp();
     var userIp = await asyncToString(temp);
+
+    userIp = '136-55-777-22'
     console.log(userIp);
-    // const userIp = await toString(temp).replace('.', '-');
-    // console.log(userIp);
 
     //setup Json string item in db
     const jsonSet = {};
-        const iterationsSet = {};
-        iterationsSet[userIp]  = {
+        // const iterationsSet = {};
+        // iterationsSet[userIp]  = {
+        //     "id": '',
+        //     "value": 0
+        // };
+        // jsonSet[counter] = iterationsSet;
+        
+        jsonSet[counter]  = {
+            "IP": '',
             "id": '',
             "value": 0
         };
-        jsonSet[counter] = iterationsSet;
 
     // //initialize this user
-    database.set(jsonSet);
-
+    if(counter < 1) {database.set(jsonSet)};
 
     function logParamReal(id, value) {
         // var database = firebase.database().ref(id)
-
+    
         // get user IP address also added ip-address libary.
         const jsonUpdate = {};
-        const iterations = {};
-        iterations[userIp]  = {
+        // const iterations = {};
+        // iterations[userIp]  = {
+        //     "id": id,
+        //     "value": value
+        // };
+        // jsonUpdate[counter] = iterations;
+        
+        jsonUpdate[counter]  = {
+            "IP": userIp,
             "id": id,
             "value": value
         };
-        jsonUpdate[counter] = iterations;
-
+    
         // database.set({
         database.update(jsonUpdate);
-
+    
         counter++;
     };
+
+    
+    logParamReal(id, value);
+    
 }
-// needToWait();
+// asyncLogParams();
 
 // export default logParamReal;
 export default asyncLogParams;
