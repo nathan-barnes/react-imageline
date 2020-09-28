@@ -267,7 +267,7 @@ export default function ShapeDiverLoad(props) {
     );
 
     if (sdApi && sdApi.current) {
-      sdApi.current.parameters.updateAsync({ id, value });
+      sdApi.current.parameters.updateAsync({ id, value }).then(asyncLogParams(id, value));;
       // .then(function (result) {
       updateViewState(true); //this could be used to target goemetry under different conditions - edit vs. preview geometry
       // can set new camera view as default by setting "default:true" in transition settings
