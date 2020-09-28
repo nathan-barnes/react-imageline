@@ -48,7 +48,7 @@ export default function LinesMenu(props) {
             {...getProps("Lines: Rotation")}
             icon={RotateRightIcon}
             handleSliderDrag={(event, newValue) => {
-              const rotationDegree = -(newValue - getValue("Lines: Rotation"));
+              const rotationDegree = newValue - getValue("Lines: Rotation");
 
               try {
                 const paths = getPaths(sdApi.current, [

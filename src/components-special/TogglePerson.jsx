@@ -13,7 +13,7 @@ export const getPerson = (sdApi) => {
 export function TogglePerson(props) {
   const { personState, setPersonState } = props;
   // const [showState, setShowState] = useState(false);
-  const { sdApi, updateViewState } = props;
+  const { sdApi } = props;
   const editOn = props.editOn;
 
   const togglePerson = () => {

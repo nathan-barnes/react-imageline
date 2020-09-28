@@ -187,9 +187,8 @@ export default function InputManager(props) {
         getValue("Lines: Stroke%ofMax") +
         "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
-      disabled: params[paramIds["Waves: EditModeOn"]],
+      // disabled: params[paramIds["Waves: EditModeOn"]],
     },
-
     {
       heading: "Scope",
       subHeading:

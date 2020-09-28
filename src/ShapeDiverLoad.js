@@ -481,11 +481,10 @@ export default function ShapeDiverLoad(props) {
 
   const updateViewState = (reverse) => {
     //maybe useCallback and memo-ize?
-
     const previewPathsSelected = personState ? previewPaths : [previewPaths[1]];
     console.log(`previewPaths: ${previewPaths}`);
     const toShow = !editOn
-      ? [editPaths, previewPaths]
+      ? [editPaths, previewPathsSelected]
       : [previewPathsSelected, editPaths];
     if (reverse) toShow.reverse();
     sdApi.current.scene.toggleGeometry(...toShow);
@@ -494,7 +493,7 @@ export default function ShapeDiverLoad(props) {
 
   const busySpinner = (event) => {
     const state = sdApi.current.state.get().data;
-    console.log(`JSON.stringify(state): ${JSON.stringify(state)}`);
+    // console.log(`JSON.stringify(state): ${JSON.stringify(state)}`);
     if (state.busy) {
       setBusyState(true);
       setProgress(state.progress);
@@ -564,13 +563,16 @@ export default function ShapeDiverLoad(props) {
                   bottom: 600,
                   left: 25,
                   zIndex: 10,
-                  marginBottom: "-50px",
+                  marginBottom: "-65px",
                 }}
               >
                 <LinearProgress
                   variant="determinate"
                   // size={30}
-                  style={{ width: "96%" }}
+                  style={{
+                    // width: "96%",
+                    right: 25,
+                  }}
                   value={progress * 100}
                   color={progress === 1 ? "secondary" : "primary"}
                 />
