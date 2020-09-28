@@ -2,7 +2,14 @@ import React, { useCallback, useRef, useEffect, useState } from "react";
 // import { makeStyles } from "@material-ui/styles";
 
 // import "./ShapeDiverContainer.css";
-import { Grid, Paper, Card } from "@material-ui/core";
+import {
+  Grid,
+  Paper,
+  Card,
+  Typography,
+  CircularProgress,
+  LinearProgress,
+} from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
 
@@ -17,7 +24,6 @@ import {
 import { TogglePerson } from "./components-special/TogglePerson";
 import ScreenCapButton from "./components-special/ScreenCapButton";
 import { getPaths } from "./SDHelpers";
-import { getPerson } from "./components-special/TogglePerson";
 
 // goal: Is it possible to load the API without loading a window?  Yes, using Backend api
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
@@ -46,6 +52,9 @@ export default function ShapeDiverLoad(props) {
 
   const [editOn, setEditOn] = useState(false);
   const [personState, setPersonState] = useState(true);
+
+  const [busyState, setBusyState] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   //Adding Selectable Points:
   const sphereRefs = useRef([]);
@@ -241,6 +250,8 @@ export default function ShapeDiverLoad(props) {
         api.scene.addEventListener(api.scene.EVENTTYPE.DRAG_END, dragCallback);
         // api.scene.addEventListener(api.scene.EVENTTYPE.SELECT_ON, addPoint);;
         // api.scene.camera.zoomAsync(previewPaths);
+        api.state.addEventListener(api.state.EVENTTYPE.BUSY, busySpinner);
+        api.state.addEventListener(api.state.EVENTTYPE.IDLE, busySpinner);
       });
     }
   }, []); //Empty Array here means this function will run once and will not update.
@@ -481,6 +492,18 @@ export default function ShapeDiverLoad(props) {
     sdApi.current.scene.camera.zoomAsync(toShow[0]);
   };
 
+  const busySpinner = (event) => {
+    const state = sdApi.current.state.get().data;
+    console.log(`JSON.stringify(state): ${JSON.stringify(state)}`);
+    if (state.busy) {
+      setBusyState(true);
+      setProgress(state.progress);
+    } else {
+      setProgress(state.progress);
+      setBusyState(false);
+    }
+  };
+
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
 
@@ -544,6 +567,13 @@ export default function ShapeDiverLoad(props) {
                   marginBottom: "-50px",
                 }}
               >
+                <LinearProgress
+                  variant="determinate"
+                  // size={30}
+                  style={{ width: "96%" }}
+                  value={progress * 100}
+                  color={progress === 1 ? "secondary" : "primary"}
+                />
                 <UndoButton undoAndSync={undoAndSync} />
                 <RedoButton redoAndSync={redoAndSync} />{" "}
                 <TogglePerson
@@ -554,6 +584,17 @@ export default function ShapeDiverLoad(props) {
                   updateViewState={updateViewState}
                 />
                 <ScreenCapButton sdApi={sdApi} />
+                <p />
+                {busyState ? (
+                  <CircularProgress
+                    variant="indeterminate"
+                    size={30}
+                    value={progress * 100}
+                    color={progress === 1 ? "secondary" : "primary"}
+                  />
+                ) : (
+                  <div />
+                )}
               </div>
             </div>
           ) : (
