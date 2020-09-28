@@ -1,17 +1,25 @@
 import React from "react";
 import { Grid, Button } from "@material-ui/core";
-
-import FeedbackButtonToggle from "../FeedbackButtonToggle";
-import FeedbackSlider from "../FeedbackSlider";
-
 import Waves from "@material-ui/icons/Waves";
-// import GraphicEq from "@material-ui/icons/GraphicEq";
 import RotateRightIcon from "@material-ui/icons/RotateRight";
 
-import { AmplitudeIcon } from "../DimIcons";
+import FeedbackButtonToggle from "../components-generic/FeedbackButtonToggle";
+import FeedbackSlider from "../components-generic/FeedbackSlider";
+
+import { getPaths, getCenterPivot } from "../SDHelpers";
+import { liveTransform } from "../LiveTransforms";
 
 export default function LinesMenu(props) {
-  const { getProps, getValue, resetPoints } = props;
+  const {
+    getProps,
+    getValue,
+    resetPoints,
+    toggleEditMode,
+    sdApi,
+    setDragValue,
+    paramIds,
+    editOn,
+  } = props;
   return (
     <div>
       <Grid
@@ -39,6 +47,23 @@ export default function LinesMenu(props) {
             label={"Rotation (degrees)"}
             {...getProps("Lines: Rotation")}
             icon={RotateRightIcon}
+            handleSliderDrag={(event, newValue) => {
+              const rotationDegree = newValue - getValue("Lines: Rotation");
+
+              try {
+                const paths = getPaths(sdApi.current, [
+                  "Sphere",
+                  "Tweens",
+                  "GuideCrvs",
+                ]);
+                const pivot = getCenterPivot(sdApi, "ImageDisplay");
+                liveTransform(sdApi, paths, rotationDegree, pivot);
+              } catch (err) {
+                console.log("no driver geo found: ", err);
+              }
+
+              setDragValue(newValue, paramIds["Lines: Rotation"], "range");
+            }}
           />
         </Grid>
         {/* <Grid item xs={12}>
@@ -97,12 +122,23 @@ export default function LinesMenu(props) {
           {/* xs={6} md={12} lg={6}> */}
           <FeedbackButtonToggle
             option1="Edit Mode"
-            option2="Perf Mode"
-            {...getProps("Waves: EditModeOn")}
-            disabled={getValue("Waves: Lines/Waves") ? false : true}
+            option2="Preview Mode"
+            value={editOn}
+            handleToggle={() => {
+              toggleEditMode();
+            }}
           />
           <p />
         </Grid>
+        {/* <Grid item xs={12}>
+          <FeedbackButtonToggle
+            option1="Edit Mode"
+            option2="Preview Mode"
+            {...getProps("Waves: EditModeOn")}
+            disabled={getValue("Waves: Lines/Waves") ? false : true}
+          />
+          <p /> 
+        </Grid> */}
         <Grid item xs={12}>
           {/* xs={6} md={12} lg={6}> */}
           <Button

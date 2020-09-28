@@ -50,9 +50,11 @@ export default function FeedbackSlider(props) {
   const { value, setValue, setDragValue } = props;
   const type = "range";
 
-  const handleSliderDrag = (event, newValue) => {
-    setDragValue(newValue, pId, type);
-  };
+  const handleSliderDrag = props.handleSliderDrag
+    ? props.handleSliderDrag
+    : (event, newValue) => {
+        setDragValue(newValue, pId, type);
+      };
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue, pId, type);
@@ -83,7 +85,7 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <TheIcon />
         </Grid>
-        <Grid item sm>
+        <Grid item xs>
           <Slider
             step={step}
             min={min}
@@ -102,10 +104,7 @@ export default function FeedbackSlider(props) {
             className={classes.input}
             value={value || defValue}
             margin="dense"
-            // onChange={handleSliderDrag}
-            // onChangeCommitted={handleInputChange}
-            // onChange={handleInputChange}
-            onInput={handleInputChange}
+            onChange={handleInputChange}
             onBlur={handleBlur}
             inputProps={{
               step: step,

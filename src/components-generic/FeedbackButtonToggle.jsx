@@ -22,9 +22,11 @@ export default function FeedbackButtonToggle(props) {
   const name2 = option2 || "Two";
   //initialize with option 1 active, option2 disactivated
 
-  const handleToggle = () => {
-    setValue(!value, pId, type);
-  };
+  const handleToggle = props.handleToggle
+    ? props.handleToggle
+    : () => {
+        setValue(!value, pId, type);
+      };
 
   return (
     <ButtonGroup

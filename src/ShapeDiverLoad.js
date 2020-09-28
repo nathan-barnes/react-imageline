@@ -3,24 +3,31 @@ import React, { useCallback, useRef, useEffect, useState } from "react";
 import asyncLogParams from './logging-components/firebaseRealtime';
 
 
-// import ParamControl from "./ParamControl.js";
 // import "./ShapeDiverContainer.css";
 import {
   Grid,
   Paper,
   Card,
-  // CardContent,
-  // Box,
-  // Typography,
+  Typography,
+  CircularProgress,
+  LinearProgress,
 } from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
-// import staticParamData from "./ImageLinesParams";
-// import staticParamData from "./ImageLinesParams0454.json";
-import staticParamData from "./ImageLinesParams111.json";
 
-// goal: Change name to reflect that it loads window only? Change so it only loads the API and calls something separate to load the window?
-// goal: Is it possible to load the API without loading a window?  Probably, almost certainly.
+import staticParamData from "./static/ImageLinesParams111.json";
+import {
+  undoAction,
+  getApiValues,
+  redoAction,
+  UndoButton,
+  RedoButton,
+} from "./components-special/UndoRedo";
+import { TogglePerson } from "./components-special/TogglePerson";
+import ScreenCapButton from "./components-special/ScreenCapButton";
+import { getPaths } from "./SDHelpers";
+
+// goal: Is it possible to load the API without loading a window?  Yes, using Backend api
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
 
 // const useStyles = makeStyles((theme) => ({
@@ -41,25 +48,17 @@ export default function ShapeDiverLoad(props) {
   const sdApi = useRef();
   const [paramDefs, setParamDefs] = useState({});
   const [params, setParams] = useState({});
-  // const [exports, setExports] = useState({});
 
-  //Trying to add history.  Don't know how yet
-  // const [history, setHistory] = useState({});
-  // const [changeCounter, setChangeCounter] = useState(0);
+  const [editPaths, setEditPaths] = useState([]);
+  const [previewPaths, setPreviewPaths] = useState([]);
 
-  // const recordHistory = (id, value) => {
-  //   console.log(
-  //     `changeCount: ${changeCounter} \nnew record: id: ${id}, value: ${value} `
-  //   );
-  //   setChangeCounter((prev) => prev++);
-  //   // setHistory((prev) => ({
-  //   //   ...prev,
-  //   //   [changeCounter]: { id: id, value: value },
-  //   // }));
-  // };
+  const [editOn, setEditOn] = useState(false);
+  const [personState, setPersonState] = useState(true);
+
+  const [busyState, setBusyState] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   //Adding Selectable Points:
-  // const [selectMode, setSelectMode] = useState(false);
   const sphereRefs = useRef([]);
   const sphPoints = useRef([]);
 
@@ -80,7 +79,7 @@ export default function ShapeDiverLoad(props) {
     hoverEffect: hoverEffect,
   };
 
-  const { liveLink } = props || true;
+  const { liveLink } = props || true; //Controls whether SD is initialized or uses set of static variables
 
   useEffect(() => {
     if (!liveLink) {
@@ -88,7 +87,6 @@ export default function ShapeDiverLoad(props) {
       const staticParams = staticParamData
         .filter((p) => (p.hidden = "false"))
         .reduce((vals, p) => ({ ...vals, [p.id]: p.value }), {});
-      // // console.log("idValuePairs", idValuePairs);
       // //set paired id's and values to params
       setParams(staticParams);
       setParamDefs(staticParamData);
@@ -112,19 +110,21 @@ export default function ShapeDiverLoad(props) {
       async function loadApi() {
         // register a ShapeDiver CommPlugin
         await api.plugins.registerCommPluginAsync({
-          // ticket of the model as shown on app.shapediver.com
+          // ticket of the model as shown on app.shapediver.com - input in app.js
           ticket: props.ticket,
 
           // URL of the ShapeDiver backend system used
           modelViewUrl: "eu-central-1",
 
-          // brandedMode: false,
           deferGeometryLoading: false,
+
+          runtimeId: "CommPlugin_1",
+
+          // all following settings only work with iframe.  need to implement for api version
+          // brandedMode: false,
           // showZoomButton: true,
           // showFullscreenButton: false,
           // showInitialSpinner: false,
-
-          runtimeId: "CommPlugin_1",
           // busyGraphic:
           //   // replace with Zahner logo
           //   "https://pbs.twimg.com/profile_images/864982129104625667/awrS6KR1_400x400.jpg",
@@ -151,19 +151,11 @@ export default function ShapeDiverLoad(props) {
 
             setParamDefs(parameters);
             setParams(currentParams);
-            console.log(
-              `api.parameters.get({name:"Points"}).data[0].data["points"]`,
-              JSON.parse(api.parameters.get({ name: "Points" }).data[0].value)[
-                "points"
-              ]
-            );
 
             sphPoints.current = JSON.parse(
               api.parameters.get({ name: "Points" }).data[0].value
             )["points"];
             // setExports(currentExports);
-            // setHistory(parameters);
-            // console.log(`init history: `, JSON.stringify(parameters));
           }
         );
 
@@ -171,14 +163,69 @@ export default function ShapeDiverLoad(props) {
         await api.plugins.refreshPluginAsync("CommPlugin_1");
 
         const sceneSettings = {
+          blurSceneWhenBusy: false,
           scene: {
             show: true,
             gridVisibility: false,
-            groundPlaneVisibility: true,
+            groundPlaneVisibility: false,
+            camera: {
+              zoomExtentsFactor: 0.96, //Factor to apply to the bounding box before zooming to extents
+              autoAdjust: false, //git commEnable / disable that the camera adjusts to geometry updates
+              controls: {
+                orbit: {
+                  restrictions: {
+                    //limits camera movement in 3D scene
+                    rotation: {
+                      minPolarAngle: -90,
+                      maxPolarAngle: 90,
+                      minAzimuthAngle: -90,
+                      maxAzimuthAngle: 90,
+                    },
+                  },
+                },
+              },
+            },
           },
         };
 
         await api.updateSettingsAsync(sceneSettings);
+
+        // This section all about api display of geometry.  Goal is to show/hide edit mode using api instead of param call to gh
+        // paths cannot be collected unless geometry is in show state.
+
+        const editGeoPaths = getPaths(api, [
+          "Sphere",
+          "Tweens",
+          "GuideCrvs",
+          "ImageDisplay",
+        ]);
+        setEditPaths(editGeoPaths);
+
+        console.log(
+          `JSON.stringify(editPaths.current): ${JSON.stringify(
+            editPaths.current
+          )}`
+        );
+        console.log(
+          `JSON.stringify(editGeoPaths): ${JSON.stringify(
+            editGeoPaths
+          )}, ${editGeoPaths}`
+        );
+
+        // setDriverPaths(getPaths(api, ["Sphere", "Tweens", "GuideCrvs"]));
+
+        const previewGeoPaths = getPaths(api, ["Person", "PatternGeo"]);
+        setPreviewPaths(previewGeoPaths);
+        // setVisiblePaths(previewGeoPaths);
+
+        console.log(
+          `JSON.stringify(previewGeoPaths): ${JSON.stringify(
+            previewGeoPaths
+          )}, ${previewGeoPaths}`
+        );
+
+        api.scene.toggleGeometry([...previewGeoPaths], [...editGeoPaths]);
+        // api.scene.camera.zoomAsync(previewPaths);
       }
       loadApi().then(() => {
         api.scene.updateInteractionGroups(sphereGroup);
@@ -189,13 +236,13 @@ export default function ShapeDiverLoad(props) {
         for (let assetnum in sphereAssets) {
           let asset = sphereAssets[assetnum];
           // console.log(`asset: ${JSON.stringify(asset)}`);
-          let updateObject = {
-            id: asset.id,
-            duration: 0,
-          };
           if (asset.name.includes("Sphere_")) {
-            updateObject.interactionGroup = sphereGroup.id;
-            updateObject.name = asset.name;
+            let updateObject = {
+              id: asset.id,
+              duration: 0,
+              interactionGroup: sphereGroup.id,
+              name: asset.name,
+            };
             updateObjects.push(updateObject);
           }
         }
@@ -204,30 +251,35 @@ export default function ShapeDiverLoad(props) {
         api.scene.updatePersistentAsync(updateObjects, "CommPlugin_1");
         api.scene.addEventListener(api.scene.EVENTTYPE.DRAG_END, dragCallback);
         // api.scene.addEventListener(api.scene.EVENTTYPE.SELECT_ON, addPoint);;
+        // api.scene.camera.zoomAsync(previewPaths);
+        api.state.addEventListener(api.state.EVENTTYPE.BUSY, busySpinner);
+        api.state.addEventListener(api.state.EVENTTYPE.IDLE, busySpinner);
       });
     }
   }, []); //Empty Array here means this function will run once and will not update.
 
-  const updateParam = useCallback((value, id, type) => {
-    // const { id, value, type } = evt.target;
-    //where does "prev" come from?  How does it get populated with the correct data?
+  // update Parameter functions
+
+  // useCallback(
+  const updateParam = (value, id, type) => {
     setParams((prev) =>
       type === "file" ? { ...prev, [id]: value.name } : { ...prev, [id]: value }
     );
-    // trying to add history.  Don't know how yet.
-    // recordHistory(id, value);
-    // console.log(`history: `, history);
 
     if (sdApi && sdApi.current) {
-      sdApi.current.parameters
-        .updateAsync({ id, value })
-        .then(function (result) {
-          sdApi.current.scene.camera.zoomAsync();
-        })
-        .then(asyncLogParams(id, value));
-      console.log("id, value, type: ", id, value, type);
+      sdApi.current.parameters.updateAsync({ id, value });
+      // .then(function (result) {
+      updateViewState(true); //this could be used to target goemetry under different conditions - edit vs. preview geometry
+      // can set new camera view as default by setting "default:true" in transition settings
+      // });
+      // This is where logging goes.  also add log of errors/failed calls to api
+      // Also add log entry in updatePoints()
+      // console.log("id, value, type: ", id, value, type);
+      // console.log(`previewPaths: ${JSON.stringify(previewPaths)}`);
+      // sdApi.current.scene.camera.zoomAsync(previewPaths);
     }
-  }, []);
+  };
+  // , []);
 
   const updateParamNoSD = useCallback((value, id, type) => {
     setParams((prev) =>
@@ -235,56 +287,70 @@ export default function ShapeDiverLoad(props) {
     );
   }, []);
 
+  //trying to replace/improve getters for nested components
   /*
-  This is meant to trigger on export events.  
-  */
-  // const exportRequest = useCallback((evt) => {
-  //   const { name, type } = evt.target;
-  //   //type is maintained here to eventually handle different types of export: direct download and email.
-  //   console.log("sdApi: ", sdApi);
-  //   console.log("sdApi.current.exports: ", sdApi.current.exports);
-  //   // const exportName = name;
+  const getParamName = (paramId) => {
+    try {
+      var name = paramDefs.find((p) => p.id === paramId).name;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found`);
+    } //add error handling, return error if caught
+    return name;
+  };
 
-  //   if (sdApi) {
-  //     sdApi.current.exports
-  //       .requestAsync({ name: name })
-  //       .catch(function (err) {
-  //         return Promise.reject(err);
-  //       })
-  //       .then(function (response) {
-  //         let link = response.data.content[0].href;
-  //         window.location = link;
-  //       });
-  //   }
-  // }, []);
+  const getParamID = (paramName) => {
+    try {
+      var id = paramDefs.find((p) => p.name === paramName).id;
+    } catch (err) {
+      alert(err, `paramName ${paramName} not found`);
+    } //add error handling, return error if caught
+    return id;
+  };
+
+  const getParamValue = (paramId) => {
+    try {
+      var value = params.paramId;
+    } catch (err) {
+      alert(err, `paramId ${paramId} not found in params`);
+    } //add error handling, return error if caught
+    return value;
+  };
+*/
+
+  /*
+  // This is meant to trigger on export events.  
+  const exportRequest = useCallback((evt) => {
+      const { name, type } = evt.target;
+      //type is maintained here to eventually handle different types of export: direct download and email.
+      console.log("sdApi: ", sdApi);
+      console.log("sdApi.current.exports: ", sdApi.current.exports);
+      // const exportName = name;
+    
+      if (sdApi) {
+          sdApi.current.exports
+            .requestAsync({ name: name })
+            .catch(function (err) {
+                return Promise.reject(err);
+              })
+              .then(function (response) {
+                  let link = response.data.content[0].href;
+                  window.location = link;
+                });
+            }
+          }, []);
+ */
 
   // More on selectable points:
   const dragCallback = (event) => {
     const sphereID = event.scenePath.split(".")[1];
-    console.log("sphereId: ", sphereID);
+    // console.log("sphereId: ", sphereID);
 
-    // const sphereAsset = sdApi.current.scene.get(
-    //   {
-    //     id: sphereID,
-    //   },
-    //   "CommPlugin_1"
-    // );
     const selectedSph = sphereRefs.current
       .find((ref) => ref.id === sphereID)
       .name.split("_")[1];
-    // const selectedSph = sphereAsset.data[0].name.split("_")[1];
-
-    console.log(
-      "selected Sph: ",
-      selectedSph
-      // "\nlocalSph: ",
-      // localselectedSph
-    );
-
-    // setSelectedSphere(selectedSph);
 
     const tFormName = selectedSph < 5 ? "TForm1" : "TForm2"; //assumes 4 points per curve - this may not always be true
-    console.log("tFormName ", tFormName);
+    // console.log("tFormName ", tFormName);
 
     const tForm = getDataByName(tFormName);
 
@@ -300,6 +366,7 @@ export default function ShapeDiverLoad(props) {
     let tempPts = sphPoints.current;
     // let tempPts = getDataByName("points");
     // console.log("tempPts: ", tempPts);
+
     tempPts.splice(selectedSph - 1, 1, [tPos.x, tPos.y, tPos.z]);
     // console.log("drag tempPts spliced: ", tempPts);
 
@@ -313,10 +380,11 @@ export default function ShapeDiverLoad(props) {
       name: "Points",
       value: JSON.stringify({ points: pts }),
     });
+    updateViewState(true);
+    // .then(updateViewState(true));
   }
 
   /**
-   *
    * logic from  https://gamedev.stackexchange.com/questions/28249/calculate-new-vertex-position-given-a-transform-matrix
    * @param {*} point - point{x,y,z} to transform
    * @param {*} m - array[16] - 3d transform matrix
@@ -329,9 +397,7 @@ export default function ShapeDiverLoad(props) {
     const tZ = m[8] * x + m[9] * y + m[10] * z + m[11] * w;
     const tW = m[12] * x + m[13] * y + m[14] * z + m[15] * w;
     const pointTformed = { x: tX / tW, y: tY / tW, z: tZ / tW };
-    // console.log(
-    //   `JSON.stringify(pointTformed): ${JSON.stringify(pointTformed)}`
-    // );
+
     return pointTformed;
   };
 
@@ -345,6 +411,7 @@ export default function ShapeDiverLoad(props) {
   const resetPoints = () => {
     sphPoints.current = [
       [0, 0, 0],
+      // [null], //this works - use nulls as placeholders if adding and removing points
       [0, 0.333333, 0],
       [0, 0.666667, 0],
       [0, 1, 0],
@@ -356,27 +423,87 @@ export default function ShapeDiverLoad(props) {
     updatePoints(sphPoints.current);
   };
 
+  /* 
   // Note: may use this later to add points to curves on demand
-  // const addPoint = (event) => {
-  //   const pickPoint = event.selectPos;
-  //   console.log(`pickPoint: ${JSON.stringify(pickPoint)}`);
-  //   var tempPts = getDataByName("points");
+  const addPoint = (event) => {
+    const pickPoint = event.selectPos;
+    console.log(`pickPoint: ${JSON.stringify(pickPoint)}`);
+    var tempPts = getDataByName("points");
 
-  //   console.log("points before  setting: ", tempPts);
-  //   if (tempPts.length < 3) {
-  //     tempPts.push([pickPoint.x, pickPoint.y, pickPoint.z]);
-  //     console.log("tempPts after adding: ", tempPts);
-  //     updatePoints(tempPts);
-  //   }
-  //   const tempInfo =
-  //     tempPts.length === 1
-  //       ? "Drag Existing Points to update position on the mesh"
-  //       : tempPts.length === 3
-  //       ? "Maximum number of points exceeded"
-  //       : "Click on the mesh to pick a point on it...";
+    console.log("points before  setting: ", tempPts);
+    if (tempPts.length < 3) {
+      tempPts.push([pickPoint.x, pickPoint.y, pickPoint.z]);
+      console.log("tempPts after adding: ", tempPts);
+      updatePoints(tempPts);
+    }
+    const tempInfo =
+      tempPts.length === 1
+        ? "Drag Existing Points to update position on the mesh"
+        : tempPts.length === 3
+        ? "Maximum number of points exceeded"
+        : "Click on the mesh to pick a point on it...";
 
-  //   setInfo(tempInfo);
-  // };
+    setInfo(tempInfo);
+  };
+  */
+
+  const undoAndSync = () => {
+    if (undoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
+  const redoAndSync = () => {
+    if (redoAction(sdApi)) {
+      const newParams = getApiValues(sdApi, params);
+      setParams((prev) => ({ ...newParams }));
+    }
+  };
+
+  const toggleEditMode = () => {
+    // const toShow = editOn
+    //   ? [editPaths, previewPaths]
+    //   : [previewPaths, editPaths];
+
+    // // setVisiblePaths(editOn ? editPaths : previewPaths);
+
+    // sdApi.current.scene.toggleGeometry(...toShow);
+    // const personShow =
+    //   !personState || !editOn
+    //     ? [[], [previewPaths[0]]]
+    //     : [[previewPaths[0]], []];
+    // sdApi.current.scene.toggleGeometry(...personShow);
+    // sdApi.current.scene.camera.zoomAsync(toShow[0]);
+    setEditOn(!editOn);
+    console.log(`editOn.toString(): ${editOn.toString()}`);
+    console.log(`previewPaths: ${previewPaths}`);
+    updateViewState();
+  };
+
+  const updateViewState = (reverse) => {
+    //maybe useCallback and memo-ize?
+    const previewPathsSelected = personState ? previewPaths : [previewPaths[1]];
+    console.log(`previewPaths: ${previewPaths}`);
+    const toShow = !editOn
+      ? [editPaths, previewPathsSelected]
+      : [previewPathsSelected, editPaths];
+    if (reverse) toShow.reverse();
+    sdApi.current.scene.toggleGeometry(...toShow);
+    sdApi.current.scene.camera.zoomAsync(toShow[0]);
+  };
+
+  const busySpinner = (event) => {
+    const state = sdApi.current.state.get().data;
+    // console.log(`JSON.stringify(state): ${JSON.stringify(state)}`);
+    if (state.busy) {
+      setBusyState(true);
+      setProgress(state.progress);
+    } else {
+      setProgress(state.progress);
+      setBusyState(false);
+    }
+  };
 
   const canRenderParams = paramDefs && Object.keys(params).length;
   // console.log("Can it render?", canRenderParams);
@@ -393,36 +520,103 @@ export default function ShapeDiverLoad(props) {
         <Grid item xs={12} md={8}>
           {/* <!-- ShapeDiver Viewer Main Container --> */}
           {liveLink ? (
-            <Paper
-              color="secondary"
-              variant="outlined"
+            <div
               style={{
                 width: "100%",
                 height: "100%",
                 minHeight: 600,
                 maxHeight: 800,
                 flexShrink: 3,
+                // position: "sticky",
               }}
             >
-              <div
-                // className={classes.ShapediverContainer}
-                id="sdv-container"
-                ref={containerSD}
+              <Paper
+                color="secondary"
+                variant="outlined"
                 style={{
-                  position: "inherit",
-                  //sticky may allow it to stay at the top when scrolling
-                  top: "5%",
-                  bottom: "5%",
-                  height: "99%",
-                  width: "90",
-                  right: "5%",
-                  left: "5%",
-                  // flex: 1,
+                  width: "100%",
+                  height: "100%",
+                  minHeight: 600,
+                  maxHeight: 600,
+                  flexShrink: 3,
+                  // position: "sticky",
                 }}
-              />
-            </Paper>
+              >
+                <div
+                  // className={classes.ShapediverContainer}
+                  id="sdv-container"
+                  ref={containerSD}
+                  style={{
+                    position: "relative",
+                    //sticky may allow it to stay at the top when scrolling
+                    // top: "5%",
+                    // bottom: "5%",
+                    height: "99%",
+                    width: "90",
+                    // right: "5%",
+                    // left: "5%",
+                    // flex: 1,
+                  }}
+                />
+              </Paper>
+              <div
+                style={{
+                  position: "relative",
+                  bottom: 600,
+                  left: 25,
+                  zIndex: 10,
+                  marginBottom: "-65px",
+                }}
+              >
+                <LinearProgress
+                  variant="determinate"
+                  // size={30}
+                  style={{
+                    // width: "96%",
+                    right: 25,
+                  }}
+                  value={progress * 100}
+                  color={progress === 1 ? "secondary" : "primary"}
+                />
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />{" "}
+                <TogglePerson
+                  sdApi={sdApi}
+                  personState={personState}
+                  setPersonState={setPersonState}
+                  editOn={editOn}
+                  updateViewState={updateViewState}
+                />
+                <ScreenCapButton sdApi={sdApi} />
+                <p />
+                {busyState ? (
+                  <CircularProgress
+                    variant="indeterminate"
+                    size={30}
+                    value={progress * 100}
+                    color={progress === 1 ? "secondary" : "primary"}
+                  />
+                ) : (
+                  <div />
+                )}
+              </div>
+            </div>
           ) : (
             <Card>
+              <div
+                style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
+              >
+                <UndoButton undoAndSync={undoAndSync} />
+                <RedoButton redoAndSync={redoAndSync} />
+                <TogglePerson
+                  sdApi={sdApi}
+                  personState={personState}
+                  setPersonState={setPersonState}
+                  editOn={editOn}
+                  updateViewState={updateViewState}
+                />
+                <ScreenCapButton sdApi={sdApi} />
+              </div>
               <Paper
                 color="secondary"
                 variant="outlined"
@@ -433,7 +627,23 @@ export default function ShapeDiverLoad(props) {
                   maxHeight: 800,
                   flexShrink: 3,
                 }}
-              ></Paper>
+              />
+
+              {/* <Paper
+                color="secondary"
+                variant="outlined"
+                style={{
+                  position: "sticky",
+                  width: "100%",
+                  // minHeight: 600,
+                  height: "100%",
+                  // maxWidth: 600,
+                  minWidth: 200,
+                  minHeight: 200,
+                  height: "100%",
+                  margintop: "75%",
+              />
+                }} */}
             </Card>
           )}
         </Grid>
@@ -448,12 +658,17 @@ export default function ShapeDiverLoad(props) {
                 params={params}
                 // exports={exports}
                 resetPoints={resetPoints}
+                sdApi={sdApi}
+                toggleEditMode={toggleEditMode}
+                editOn={editOn}
+                paths={previewPaths}
               />
             ) : (
               <div />
             )}
           </div>
         </Grid>
+        <Grid item xs={12}></Grid>
       </Grid>
     </div>
   );
