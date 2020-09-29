@@ -40,4 +40,27 @@ async function asyncToString(string) {
     // return result;
 }
 
-export {asyncGetIp, getDate, makeid, asyncToString};
+function boolToInt(value) {
+    let goodValue = 0;
+
+    switch (value){
+        case "True":
+            goodValue = 1;
+            break
+        case "False":
+            goodValue = 0;
+            break
+        case true:
+            goodValue = 1;
+            break
+        case false:
+            goodValue = 0;
+            break
+        default:
+            goodValue = value;
+            break
+    }
+    return goodValue;
+}
+
+export {asyncGetIp, getDate, makeid, asyncToString, boolToInt};

@@ -1,5 +1,5 @@
 // import React from 'react';
-import {asyncGetIp, getDate, makeid, asyncToString} from './Logging-Utility'
+import {asyncGetIp, getDate, makeid, asyncToString, boolToInt} from './Logging-Utility'
 
 const firebase = window.firebase;
 
@@ -59,9 +59,9 @@ async function asyncLogParams(name, value) {
     let userIp = await asyncToString(temp);
 
     let {ymdDate, timeStamp } = getDate();
-    
-
-    //userIp = '136-55-777-22'
+    let valueCleaned = boolToInt(value);
+    console.log(valueCleaned);
+    userIp = '136-55-777-44'
 
     //setup Json string item in db
     const jsonSet = {};
@@ -79,7 +79,7 @@ async function asyncLogParams(name, value) {
     if(counter < 1) {database.set(jsonSet)};
 
     
-    logParamReal(name, value, userIp, ymdDate, timeStamp);
+    logParamReal(name, valueCleaned, userIp, ymdDate, timeStamp);
 }
 
 export default asyncLogParams;

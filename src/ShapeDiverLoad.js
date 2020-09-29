@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 // import { makeStyles } from "@material-ui/styles";
-import asyncLogParams from "./logging-components/firebaseRealtime";
+import asyncLogParams from "./components-logging/firebaseRealtime";
 
 // import "./ShapeDiverContainer.css";
 import {
@@ -388,7 +388,7 @@ export default function ShapeDiverLoad(props) {
         name: "Points",
         value: JSON.stringify({ points: pts }),
       })
-      .then(asyncLogParams("Points", JSON.stringify({ points: pts })));
+      .then(asyncLogParams("Points", 1));
     updateViewState(true);
     // .then(updateViewState(true));
   }
@@ -460,7 +460,7 @@ export default function ShapeDiverLoad(props) {
     if (undoAction(sdApi)) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
-      asyncLogParams("Undo", 1);
+      asyncLogParams("Undo", 0);
     }
   };
 
