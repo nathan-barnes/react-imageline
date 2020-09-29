@@ -1,37 +1,9 @@
 import React from "react";
 
-import { Button, IconButton } from "@material-ui/core";
-import { useState } from "react";
-import PersonIcon from "@material-ui/icons/Person";
-import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
-
-export function TogglePerson(props) {
-  const [showState, setShowState] = useState(false);
-  const { sdApi } = props;
-  const editMode = props.editMode || false;
-
-  const getPerson = () => {
-    return sdApi.current.scene
-      .get({ name: "Person" }, "CommPlugin_1")
-      .data.filter((p) => p.hasOwnProperty("bbmax"))[0].scenePath;
-  };
-
-  const togglePerson = () => {
-    try {
-      const toShow = showState ? [[getPerson()], []] : [[], [getPerson()]];
-      sdApi.current.scene.toggleGeometry(...toShow);
-    } catch (err) {
-      console.log("no person to toggle", err);
-    }
-    setShowState(!showState);
-  };
-
-  return (
-    <IconButton onClick={togglePerson}>
-      {showState || editMode ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
-    </IconButton>
-  );
-}
+import { Button } from "@material-ui/core";
+// import { useState } from "react";
+// import PersonIcon from "@material-ui/icons/Person";
+// import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
 
 //refactor at some point, initializing the show state in the initial parameters.
 //create two groups - Preview and EditMode
@@ -51,17 +23,6 @@ export function ToggleDrivers(props) {
       .map((q) => q.scenePath);
     return assets;
   };
-
-  //probably should consider storing these with useRef or useState
-  //   const getPanels = () => {
-  //     const assets = showState
-  //       ? sdApi.current.scene
-  //           .get({ name: "PanelBounds" }, "CommPlugin_1")
-  //           .data.filter((p) => p.hasOwnProperty("bbmax"))[0].scenePath
-  //       : null;
-  //     return assets;
-  //   };
-
   const toggleDrivers = () => {
     try {
       const toShow = showState
@@ -107,14 +68,5 @@ export function ToggleView(props) {
     <Button onClick={setToFront} onDoubleClick={setToPerspective}>
       Front/Perspective
     </Button>
-  );
-}
-
-export function EditModeToggle(props) {
-  return (
-    <IconButton
-      aria-label="Edit Mode"
-      onClick={props.toggleEditMode}
-    ></IconButton>
   );
 }

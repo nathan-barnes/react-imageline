@@ -61,20 +61,18 @@ export default function FeedbackSlider(props) {
   };
 
   const handleInputChange = (event) => {
-    setValue(
-      event.target.value === "" ? 0 : Number(event.target.value),
-      pId,
-      type
-    );
+    let nextVal = event.target.value === "" ? 0 : Number(event.target.value);
+    if (nextVal < min) nextVal = min;
+    else if (nextVal > max) nextVal = max;
+    setValue(Number(nextVal), pId, type);
   };
-
-  const handleBlur = () => {
-    if (value < min) {
-      setValue(min, pId, type);
-    } else if (value > max) {
-      setValue(max, pId, type);
-    }
-  };
+  // Dont think this is necessary:
+  // const handleBlur = (event) => {
+  //   console.log(`event: ${event}, \nevent.target.value: ${event.target.value}`);
+  //   if (event.target.value === "") setValue(0, pId, type);
+  //   else if (event.target.value < min) setValue(min, pId, type);
+  //   else if (event.target.value > max) setValue(max, pId, type);
+  // };
 
   return (
     <div className={classes.root}>
@@ -90,8 +88,7 @@ export default function FeedbackSlider(props) {
             step={step}
             min={min}
             max={max}
-            value={(typeof value === "number" ? value : 0) || defValue}
-            // defaultValue={defValue}
+            value={value || 0}
             onChange={handleSliderDrag}
             onChangeCommitted={handleSliderChange}
             aria-labelledby="input-slider"
@@ -102,10 +99,10 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <Input
             className={classes.input}
-            value={value || defValue}
+            value={value === "" ? 0 : Number(value) || 0}
             margin="dense"
             onChange={handleInputChange}
-            onBlur={handleBlur}
+            // onBlur={handleBlur}
             inputProps={{
               step: step,
               min: min,

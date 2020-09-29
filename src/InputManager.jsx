@@ -11,7 +11,7 @@ import LinesMenu from "./ui-menus/LinesMenu";
 import ScopeMenu from "./ui-menus/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
 import PerfMenu from "./ui-menus/PerfMenu";
-import TestMenu from "./ui-menus/TestMenu";
+// import TestMenu from "./ui-menus/TestMenu";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -105,16 +105,15 @@ export default function InputManager(props) {
       ? paramData.filter((p) => p.name === paramName)[0]
       : [];
     if (!thisParamData)
-      // console.log("found: ", thisParamData);
+      // console.log("found initial: ", thisParamData);
       // else
       throw new console.error(`param: ${paramName} not found`);
 
     let defaultParams = {
       setValue: updateParams,
-      setDragValue: updateParamNoSD,
       pId: paramIds[paramName],
       value: params[paramIds[paramName]],
-      defVal: thisParamData.defVal,
+      defVal: thisParamData.defval,
     };
     if (["Odd", "Even", "Int", "Float"].includes(thisParamData.type)) {
       const step =
@@ -129,7 +128,11 @@ export default function InputManager(props) {
         min: thisParamData.min,
         max: thisParamData.max,
         step: step,
+        setDragValue: updateParamNoSD,
       };
+      // console.log(
+      //   `defaultParams for ${paramName}: ${JSON.stringify(defaultParams)}`
+      // );
 
       //   // } else if (thisParamData.type === "checkbox") {
       //   //   if (thisParamData.value) {
@@ -183,7 +186,7 @@ export default function InputManager(props) {
       subHeading:
         params[paramIds["Lines: Perf per Ft of Line"]] +
         " Max Perforations/ft @ " +
-        (getValue("Lines: Stroke%ofMax") > 0 ? "+" : "") +
+        (getValue("Lines: Stroke%ofMax") > -1 ? "+" : "") +
         getValue("Lines: Stroke%ofMax") +
         "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
@@ -236,9 +239,7 @@ export default function InputManager(props) {
         >
           <p />
           <Typography gutterBottom align="center">
-            <a href={"http://azahner.com"}>
-              <ZahnerLogo />
-            </a>{" "}
+            <ZahnerLogo />
             <strong>{"  ImageLines"}</strong>
           </Typography>
           <ControlledAccordions accordionGroups={accordionGroups} />

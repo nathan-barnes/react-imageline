@@ -28,7 +28,7 @@ export default function FeedbackImageUpload(props) {
         //get the max from the param[max]?
         alert("filesize exceeds max");
       } else {
-        console.log(file, pId, type);
+        // console.log(file, pId, type);
         setValue(file, pId, type);
       }
     }

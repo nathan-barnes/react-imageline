@@ -30,7 +30,7 @@ export function liveTransform(sdApi, paths, rotationDegree, pivot) {
       reset: false,
     },
   ]);
-  console.log(`result: ${JSON.stringify(result)}`);
+  // console.log(`result: ${JSON.stringify(result)}`);
 }
 
 export function TestLiveTransform(props) {
@@ -58,7 +58,7 @@ export function TestLiveTransformSlider(props) {
     //   evt.target.value - value
     // );
     const rotationDegree = evt.target.value - value;
-    console.log(`rotationDegree: ${rotationDegree}`);
+    // console.log(`rotationDegree: ${rotationDegree}`);
     try {
       liveTransform({ ...props, rotationDegree });
     } catch (err) {
