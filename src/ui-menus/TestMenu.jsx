@@ -1,7 +1,9 @@
 import React from "react";
 import { Grid, Button } from "@material-ui/core";
-import // ToggleView,
-"../components-special/TestSceneControls";
+import {
+  ToggleDrivers,
+  // ToggleView,
+} from "../components-special/TestSceneControls";
 import { liveTransform } from "../LiveTransforms";
 import FeedbackSlider from "../components-generic/FeedbackSlider";
 import RotateRightIcon from "@material-ui/icons/RotateRight";
@@ -19,6 +21,7 @@ export default function TestMenu(props) {
 
   return (
     <div>
+      <ToggleDrivers {...props} />
       <p />
       <Button onClick={toggleEditMode}>Toggle Edit Mode</Button>
       {/* <ToggleView {...props} /> */}
