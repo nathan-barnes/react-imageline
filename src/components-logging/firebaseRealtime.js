@@ -1,5 +1,5 @@
 import React from 'react';
-import {asyncGetIp, getDate } from './Logging-Utility'
+import {asyncGetIp, getDate, makeid} from './Logging-Utility'
 // import logUtility from './Logging-Utility'
 
 const firebase = window.firebase;
@@ -48,16 +48,6 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
 
 
 //sudo unique ID for session
-
-function makeid(length) {
-    let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
- }
  const uniquId =  makeid(10);
 
 
