@@ -17,7 +17,6 @@ export default function TestMenu(props) {
     setDragValue,
     paramIds,
     toggleEditMode,
-    updateViewState,
   } = props;
 
   return (

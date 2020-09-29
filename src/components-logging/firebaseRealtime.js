@@ -61,7 +61,7 @@ async function asyncLogParams(name, value) {
     let {ymdDate, timeStamp } = getDate();
     
 
-    // userIp = '136-55-777-22'
+    //userIp = '136-55-777-22'
 
     //setup Json string item in db
     const jsonSet = {};

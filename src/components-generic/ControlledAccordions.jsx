@@ -15,12 +15,12 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   heading: {
-    fontSize: theme.typography.pxToRem(15) + ' !important',
+    fontSize: theme.typography.pxToRem(20) + " !important",
     flexBasis: "33.33%",
     flexShrink: 0,
   },
   secondaryHeading: {
-    fontSize: theme.typography.pxToRem(10) + ' !important',
+    fontSize: theme.typography.pxToRem(15) + " !important",
     color: theme.palette.text.secondary,
     flexBasis: "66.6%",
     flexShrink: 0,
@@ -51,7 +51,7 @@ export default function ControlledAccordions(props) {
           disabled={group.disabled || false}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon color="primary" />}
             aria-controls={"panel" + i + "bh-content"}
             id={"panel" + 1 + "bh-header"}
             // id necessary to differentiate instances of the component

@@ -9,7 +9,7 @@ export default function ScreenCapButton(props) {
 
   const onClick = () => {
     const imageURI = sdApi.current.scene.getScreenshot();
-    console.log("imageURI: ", imageURI, imageURI.toString());
+    // console.log("imageURI: ", imageURI, imageURI.toString());
     const link = document.createElement("a");
     link.download = "Zahner-ImageLines";
     link.href = imageURI;
@@ -18,11 +18,7 @@ export default function ScreenCapButton(props) {
 
   return (
     <ToolTip title="screenshot" arrow>
-      <IconButton
-        aria-label="download ScreenShot"
-        //   color="secondary"
-        onClick={onClick}
-      >
+      <IconButton aria-label="download ScreenShot" onClick={onClick}>
         <CameraAltIcon />
       </IconButton>
     </ToolTip>
