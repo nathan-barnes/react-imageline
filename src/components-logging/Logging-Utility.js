@@ -33,4 +33,11 @@ function makeid(length) {
     return result;
  }
 
-export {asyncGetIp, getDate, makeid};
+ //helper functions for fixing strings for database
+async function asyncToString(string) {
+    const regex = /\./g;
+    return await string.replace(regex, '-');
+    // return result;
+}
+
+export {asyncGetIp, getDate, makeid, asyncToString};

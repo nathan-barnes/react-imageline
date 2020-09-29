@@ -1,6 +1,5 @@
-import React from 'react';
-import {asyncGetIp, getDate, makeid} from './Logging-Utility'
-// import logUtility from './Logging-Utility'
+// import React from 'react';
+import {asyncGetIp, getDate, makeid, asyncToString} from './Logging-Utility'
 
 const firebase = window.firebase;
 
@@ -18,12 +17,6 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-//helper functions
-async function asyncToString(string) {
-    const regex = /\./g;
-    return await string.replace(regex, '-');
-    // return result;
-}
 
 function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
     // var database = firebase.database().ref(id)
@@ -48,8 +41,7 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
 
 
 //sudo unique ID for session
- const uniquId =  makeid(10);
-
+const uniquId =  makeid(10);
 
 
 // Get a reference to the database service
