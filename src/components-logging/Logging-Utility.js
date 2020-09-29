@@ -3,7 +3,7 @@
     
 function getDate() {
     const date = new Date();
-    const ymdDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    const ymdDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
     const hmsTime = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     const timeStamp = date.getTime();
 

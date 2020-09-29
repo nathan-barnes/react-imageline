@@ -41,7 +41,7 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
 
 
 //sudo unique ID for session
-const uniquId =  makeid(10);
+const uniquId =  makeid(20);
 
 
 // Get a reference to the database service
@@ -61,7 +61,7 @@ async function asyncLogParams(name, value) {
     let {ymdDate, timeStamp } = getDate();
     
 
-    //userIp = '136-55-777-22'
+    // userIp = '136-55-777-22'
 
     //setup Json string item in db
     const jsonSet = {};
@@ -69,8 +69,8 @@ async function asyncLogParams(name, value) {
         jsonSet[counter]  = {
             "IP": '',
             "name": '',
-            "value": 0,
-            "Counter": 0,
+            "value": '',
+            "Counter": '',
             "Date": '',
             "timeStamp": ''
         };
