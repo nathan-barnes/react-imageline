@@ -1,14 +1,13 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 // import { makeStyles } from "@material-ui/styles";
-import asyncLogParams from './logging-components/firebaseRealtime';
-
+import asyncLogParams from "./logging-components/firebaseRealtime";
 
 // import "./ShapeDiverContainer.css";
 import {
   Grid,
   Paper,
   Card,
-  Typography,
+  // Typography,
   CircularProgress,
   LinearProgress,
 } from "@material-ui/core";
@@ -26,6 +25,7 @@ import {
 import { TogglePerson } from "./components-special/TogglePerson";
 import ScreenCapButton from "./components-special/ScreenCapButton";
 import { getPaths } from "./SDHelpers";
+import { ZoomExtents } from "./components-special/ZoomExtents";
 
 // goal: Is it possible to load the API without loading a window?  Yes, using Backend api
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
@@ -48,6 +48,7 @@ export default function ShapeDiverLoad(props) {
   const sdApi = useRef();
   const [paramDefs, setParamDefs] = useState({});
   const [params, setParams] = useState({});
+  const [pIdNameList, setPIdNameList] = useState({});
 
   const [editPaths, setEditPaths] = useState([]);
   const [previewPaths, setPreviewPaths] = useState([]);
@@ -140,6 +141,11 @@ export default function ShapeDiverLoad(props) {
             const currentParams = parameters
               .filter((p) => !p.hidden)
               .reduce((vals, def) => ({ ...vals, [def.id]: def.value }), {});
+
+            const pIdNamePairs = parameters
+              .filter((p) => !p.hidden)
+              .reduce((vals, def) => ({ ...vals, [def.id]: def.name }), {});
+
             //From the list of all params, filter down to only ones that are not hidden
             //From filtered list, reduce to array of id:value pairs
 
@@ -151,6 +157,7 @@ export default function ShapeDiverLoad(props) {
 
             setParamDefs(parameters);
             setParams(currentParams);
+            setPIdNameList(pIdNamePairs);
 
             sphPoints.current = JSON.parse(
               api.parameters.get({ name: "Points" }).data[0].value
@@ -169,8 +176,8 @@ export default function ShapeDiverLoad(props) {
             gridVisibility: false,
             groundPlaneVisibility: false,
             camera: {
-              zoomExtentsFactor: 0.96, //Factor to apply to the bounding box before zooming to extents
-              autoAdjust: false, //git commEnable / disable that the camera adjusts to geometry updates
+              zoomExtentsFactor: 1, // Factor to apply to the bounding box before zooming to extents
+              autoAdjust: false, // disable that the camera adjusts to geometry updates
               controls: {
                 orbit: {
                   restrictions: {
@@ -201,31 +208,29 @@ export default function ShapeDiverLoad(props) {
         ]);
         setEditPaths(editGeoPaths);
 
-        console.log(
-          `JSON.stringify(editPaths.current): ${JSON.stringify(
-            editPaths.current
-          )}`
-        );
-        console.log(
-          `JSON.stringify(editGeoPaths): ${JSON.stringify(
-            editGeoPaths
-          )}, ${editGeoPaths}`
-        );
+        // console.log(
+        //   `JSON.stringify(editPaths.current): ${JSON.stringify(
+        //     editPaths.current
+        //   )}`
+        // );
+        // console.log(
+        //   `JSON.stringify(editGeoPaths): ${JSON.stringify(
+        //     editGeoPaths
+        //   )}, ${editGeoPaths}`
+        // );
 
         // setDriverPaths(getPaths(api, ["Sphere", "Tweens", "GuideCrvs"]));
 
         const previewGeoPaths = getPaths(api, ["Person", "PatternGeo"]);
         setPreviewPaths(previewGeoPaths);
-        // setVisiblePaths(previewGeoPaths);
 
-        console.log(
-          `JSON.stringify(previewGeoPaths): ${JSON.stringify(
-            previewGeoPaths
-          )}, ${previewGeoPaths}`
-        );
+        // console.log(
+        //   `JSON.stringify(previewGeoPaths): ${JSON.stringify(
+        //     previewGeoPaths
+        //   )}, ${previewGeoPaths}`
+        // );
 
         api.scene.toggleGeometry([...previewGeoPaths], [...editGeoPaths]);
-        // api.scene.camera.zoomAsync(previewPaths);
       }
       loadApi().then(() => {
         api.scene.updateInteractionGroups(sphereGroup);
@@ -267,7 +272,9 @@ export default function ShapeDiverLoad(props) {
     );
 
     if (sdApi && sdApi.current) {
-      sdApi.current.parameters.updateAsync({ id, value });
+      sdApi.current.parameters
+        .updateAsync({ id, value })
+        .then(asyncLogParams(pIdNameList[id], value));
       // .then(function (result) {
       updateViewState(true); //this could be used to target goemetry under different conditions - edit vs. preview geometry
       // can set new camera view as default by setting "default:true" in transition settings
@@ -376,10 +383,12 @@ export default function ShapeDiverLoad(props) {
   function updatePoints(pts) {
     sphPoints.current = pts;
     // console.log("pts to update: ", JSON.stringify(pts));
-    sdApi.current.parameters.updateAsync({
-      name: "Points",
-      value: JSON.stringify({ points: pts }),
-    });
+    sdApi.current.parameters
+      .updateAsync({
+        name: "Points",
+        value: JSON.stringify({ points: pts }),
+      })
+      .then(asyncLogParams("Points", JSON.stringify({ points: pts })));
     updateViewState(true);
     // .then(updateViewState(true));
   }
@@ -451,6 +460,7 @@ export default function ShapeDiverLoad(props) {
     if (undoAction(sdApi)) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
+      asyncLogParams("Undo", 1);
     }
   };
 
@@ -458,33 +468,21 @@ export default function ShapeDiverLoad(props) {
     if (redoAction(sdApi)) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
+      asyncLogParams("Redo", 1);
     }
   };
 
   const toggleEditMode = () => {
-    // const toShow = editOn
-    //   ? [editPaths, previewPaths]
-    //   : [previewPaths, editPaths];
-
-    // // setVisiblePaths(editOn ? editPaths : previewPaths);
-
-    // sdApi.current.scene.toggleGeometry(...toShow);
-    // const personShow =
-    //   !personState || !editOn
-    //     ? [[], [previewPaths[0]]]
-    //     : [[previewPaths[0]], []];
-    // sdApi.current.scene.toggleGeometry(...personShow);
-    // sdApi.current.scene.camera.zoomAsync(toShow[0]);
     setEditOn(!editOn);
-    console.log(`editOn.toString(): ${editOn.toString()}`);
-    console.log(`previewPaths: ${previewPaths}`);
+    // console.log(`editOn.toString(): ${editOn.toString()}`);
+    // console.log(`previewPaths: ${previewPaths}`);
     updateViewState();
   };
 
   const updateViewState = (reverse) => {
     //maybe useCallback and memo-ize?
     const previewPathsSelected = personState ? previewPaths : [previewPaths[1]];
-    console.log(`previewPaths: ${previewPaths}`);
+    // console.log(`previewPaths: ${previewPaths}`);
     const toShow = !editOn
       ? [editPaths, previewPathsSelected]
       : [previewPathsSelected, editPaths];
@@ -587,12 +585,13 @@ export default function ShapeDiverLoad(props) {
                   editOn={editOn}
                   updateViewState={updateViewState}
                 />
+                <ZoomExtents updateViewState={updateViewState} />
                 <ScreenCapButton sdApi={sdApi} />
                 <p />
                 {busyState ? (
                   <CircularProgress
                     variant="indeterminate"
-                    size={30}
+                    size={20}
                     value={progress * 100}
                     color={progress === 1 ? "secondary" : "primary"}
                   />
@@ -648,25 +647,27 @@ export default function ShapeDiverLoad(props) {
           )}
         </Grid>
         <Grid item xs={12} md={4}>
-          <div id="controls">
-            {canRenderParams ? (
-              <InputManager
-                updateParams={updateParam}
-                updateParamNoSD={updateParamNoSD}
-                // exportRequest={exportRequest}
-                paramData={paramDefs}
-                params={params}
-                // exports={exports}
-                resetPoints={resetPoints}
-                sdApi={sdApi}
-                toggleEditMode={toggleEditMode}
-                editOn={editOn}
-                paths={previewPaths}
-              />
-            ) : (
-              <div />
-            )}
-          </div>
+          <Paper style={{ height: 600 }} variant="outlined">
+            <div id="controls">
+              {canRenderParams ? (
+                <InputManager
+                  updateParams={updateParam}
+                  updateParamNoSD={updateParamNoSD}
+                  // exportRequest={exportRequest}
+                  paramData={paramDefs}
+                  params={params}
+                  // exports={exports}
+                  resetPoints={resetPoints}
+                  sdApi={sdApi}
+                  toggleEditMode={toggleEditMode}
+                  editOn={editOn}
+                  // paths={previewPaths}
+                />
+              ) : (
+                <div />
+              )}
+            </div>
+          </Paper>
         </Grid>
         <Grid item xs={12}></Grid>
       </Grid>

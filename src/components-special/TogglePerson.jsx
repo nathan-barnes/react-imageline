@@ -24,7 +24,7 @@ export function TogglePerson(props) {
           : [[], [getPerson(sdApi)]];
         sdApi.current.scene.toggleGeometry(...toShow);
       } catch (err) {
-        console.log("no person to toggle", err);
+        // console.log("no person to toggle", err);
       }
       setPersonState(!personState);
     }
