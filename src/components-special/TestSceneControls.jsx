@@ -4,7 +4,6 @@ import { Button, IconButton } from "@material-ui/core";
 import { useState } from "react";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
-import Donut from "react-dial-knob";
 
 export function TogglePerson(props) {
   const [showState, setShowState] = useState(false);
@@ -84,7 +83,7 @@ export function ToggleDrivers(props) {
 
 export function ToggleView(props) {
   const { sdApi } = props;
-  const [frontOn, setFrontOn] = useState(false);
+  //   const [frontOn, setFrontOn] = useState(false);
 
   const setToFront = () => {
     console.log(

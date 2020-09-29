@@ -1,35 +1,17 @@
 import React from "react";
-import {
-  useState,
-  useEffect,
-  // useCallback
-} from "react";
-
-import {
-  //   Button,
-  // Grid,
-  Paper,
-  Typography,
-  Grid,
-  // Card,
-  // CardHeader,
-  // CardMedia,
-  // CardContent,
-  // Select,
-} from "@material-ui/core";
+import { useState, useEffect } from "react";
+import { Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import ZahnerLogo from "./ZahnerLogo";
+import ZahnerLogo from "./static/ZahnerLogo";
 
-import ControlledAccordions from "./ControlledAccordions";
+import ControlledAccordions from "./components-generic/ControlledAccordions";
 
-import ImageMenu from "./ui-components/ImageMenu";
-import LinesMenu from "./ui-components/LinesMenu";
-import ScopeMenu from "./ui-components/ScopeMenu";
+import ImageMenu from "./ui-menus/ImageMenu";
+import LinesMenu from "./ui-menus/LinesMenu";
+import ScopeMenu from "./ui-menus/ScopeMenu";
 // import MaterialMenu from "./ui-components/MaterialMenu";
-import PerfMenu from "./ui-components/PerfMenu";
-import TestMenu from "./ui-components/TestMenu";
-import ScreenCapButton from "./ScreenCapButton";
-import { UndoButton, RedoButton } from "./UndoRedo";
+import PerfMenu from "./ui-menus/PerfMenu";
+import TestMenu from "./ui-menus/TestMenu";
 
 //This component holds input values and is parent to a viewer that reports the values as well as a control panel that allows the values to be changed
 //Is this component custom built for each app?  It may make sense, at least at the beginning, until patterns & templates are established
@@ -58,19 +40,12 @@ const useStyles = makeStyles((theme) => ({
 export default function InputManager(props) {
   const classes = useStyles();
 
-  const [bool1, setBool1] = useState(true);
+  // const [bool1, setBool1] = useState(true);
 
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
-  const {
-    params,
-    paramData,
-    updateParams,
-    updateParamNoSD,
-    resetPoints,
-    sdApi,
-  } = props;
+  const { params, paramData, updateParams, updateParamNoSD } = props;
 
   // console.log(
   //   `From parent: \nparams: ${params}\n\nparamData: ${paramData}\n\nupdateParams: ${updateParams}`
@@ -79,24 +54,6 @@ export default function InputManager(props) {
   //then collect params and set to current
 
   //   These are the names of params in the SD app that will be used in the UI
-  // const paramNames = [
-  //   "Scope Width",
-  //   "Scope Height",
-  //   "Bool.InvertSampling",
-  //   "Bool.IsStretched",
-  //   "MATERIAL",
-  //   "ImageInput",
-  //   "LINES/WAVES",
-  //   "LINES/WAVES PER FT",
-  //   "PERF PER FT OF LINES/WAVES",
-  //   "ROTATE LINES/WAVES",
-  //   "WAVE CURVES-HIDE/SHOW",
-  //   "WAVE DRIVERS-HIDE/SHOW",
-  //   "WAVES: MAX AMPLITUDE",
-  //   "WAVES: SEED",
-  //   "Num.Stroke%ofMax",
-  // ];
-
   // revised: Script version 0.4.54
   const paramNames = [
     "Waves: Lines/Waves",
@@ -126,24 +83,12 @@ export default function InputManager(props) {
     "Waves: EditModeOn",
   ];
 
-  //Then search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
-  //reduce the array from SD? from names? names with a filter for that name that returns the name and id
+  // hen search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
+  // reduce the array from SD? from names? names with a filter for that name that returns the name and id
   // or does this violate DRY?  If there's any mismatch, there should be check, but perhaps generating this list is superfluous?
-
-  //   function getId(name) {
-  //     return paramIds[name];
-  //   }
 
   useEffect(() => {
     // This is probably where the SDApi gets called to generate the param list, maybe also to initialize the viewer (?)
-
-    // Generate a list of ids paired with values, this is what actually gets updated
-    // const idValuePairs = paramData
-    //   .filter((p) => paramNames.includes(p.name))
-    //   .reduce((vals, p) => ({ ...vals, [p.id]: p.value }), {});
-    // // console.log("idValuePairs", idValuePairs);
-    // //set paired id's and values to params
-    // setParams(idValuePairs);
 
     const paramIdPaired = paramData
       .filter((p) => paramNames.includes(p.name))
@@ -185,8 +130,6 @@ export default function InputManager(props) {
         max: thisParamData.max,
         step: step,
       };
-      //   console.log("range defaults: ", defaultParams);
-      // }
 
       //   // } else if (thisParamData.type === "checkbox") {
       //   //   if (thisParamData.value) {
@@ -199,8 +142,6 @@ export default function InputManager(props) {
         </option>
       ));
     }
-    // //if range, add other values from default props.
-
     return defaultParams;
   };
 
@@ -229,9 +170,11 @@ export default function InputManager(props) {
         " deg",
       children: (
         <LinesMenu
-          getValue={getValue}
+          {...props}
+          paramIds={paramIds}
           getProps={getProps}
-          resetPoints={resetPoints}
+          getValue={getValue}
+          setDragValue={updateParamNoSD}
         />
       ),
     },
@@ -244,9 +187,8 @@ export default function InputManager(props) {
         getValue("Lines: Stroke%ofMax") +
         "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
-      disabled: params[paramIds["Waves: EditModeOn"]],
+      // disabled: params[paramIds["Waves: EditModeOn"]],
     },
-
     {
       heading: "Scope",
       subHeading:
@@ -256,19 +198,21 @@ export default function InputManager(props) {
         `' `,
       //  +
       // (bool1 ? "Wall" : "Ceiling"),
-      children: (
-        <ScopeMenu
-          getProps={getProps}
-          getValue={getValue}
-          setBool1={setBool1}
-          bool1={bool1}
-        />
-      ),
+      children: <ScopeMenu getProps={getProps} getValue={getValue} />,
     },
     // {
     //   heading: "Test",
     //   subHeading: "Test Features",
-    //   children: <TestMenu {...props} params={params} />,
+    //   children: (
+    //     <TestMenu
+    //       {...props}
+    //       params={params}
+    //       paramIds={paramIds}
+    //       getProps={getProps}
+    //       getValue={getValue}
+    //       setDragValue={updateParamNoSD}
+    //     />
+    //   ),
     // },
     // {
     //   heading: "Material",
@@ -285,33 +229,6 @@ export default function InputManager(props) {
   return (
     <div>
       <div>
-        {/* <Grid
-          container
-          spacing={0}
-          direction="row-reverse"
-          alignContent="center"
-        > */}
-        {/* The grid values need tweaking!!! */}
-
-        {/* <Card>
-          <CardContent> 
-          <Typography> */}
-        {/* feedback params here to check that updates are happening */}
-        {/* {Object.keys(paramIds).map((param, idx) => (
-                  <p key={idx}>
-                    {idx}: {param} = {params[paramIds[param]].toString()}
-                  </p>
-                ))}
-          </Typography>
-          </CardContent>
-            </Card> */}
-
-        {/* <Grid
-            item
-            xs={12}
-            //  sm={10} md={3}
-          > 
-            <div> */}
         <Paper
           color="secondary"
           variant="outlined"
@@ -324,22 +241,8 @@ export default function InputManager(props) {
             </a>{" "}
             <strong>{"  ImageLines"}</strong>
           </Typography>
-          {/* <Grid container spacing={0} justify="center">
-            <Grid item xs={2}>
-              <UndoButton {...props} />
-            </Grid>
-            <Grid item xs={5}>
-              <ScreenCapButton {...props} />
-            </Grid>
-            <Grid item xs={2}>
-              <RedoButton {...props} />
-            </Grid>
-          </Grid> */}
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>
-        {/* </div>
-          </Grid>
-        </Grid> */}
       </div>
     </div>
   );

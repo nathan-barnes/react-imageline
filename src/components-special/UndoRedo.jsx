@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import Undo from "@material-ui/icons/Undo";
 import Redo from "@material-ui/icons/Redo";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -32,12 +32,6 @@ export function getApiValues(sdApi, params) {
     // .map((p) => ({ [p.id]: p.value }))
     .reduce((obj, each) => ({ ...obj, [each.id]: each.value }), {});
   return newParams;
-}
-
-function syncParams(setParams, newParams) {
-  //   const { setParams, newParams } = props;
-  setParams(newParams);
-  //then log this action
 }
 
 export function UndoButton(props) {

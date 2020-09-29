@@ -50,9 +50,11 @@ export default function FeedbackSlider(props) {
   const { value, setValue, setDragValue } = props;
   const type = "range";
 
-  const handleSliderDrag = (event, newValue) => {
-    setDragValue(newValue, pId, type);
-  };
+  const handleSliderDrag = props.handleSliderDrag
+    ? props.handleSliderDrag
+    : (event, newValue) => {
+        setDragValue(newValue, pId, type);
+      };
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue, pId, type);
