@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 // import { makeStyles } from "@material-ui/styles";
-import asyncLogParams from "./logging-components/firebaseRealtime";
+import asyncLogParams from './components-logging/firebaseRealtime';
 
 // import "./ShapeDiverContainer.css";
 import {
