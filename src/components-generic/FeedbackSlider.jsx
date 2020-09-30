@@ -61,23 +61,12 @@ export default function FeedbackSlider(props) {
   };
 
   const handleInputChange = (event) => {
-    // console.log(`event: ${event}, \nevent.target.value: ${event.target.value}`);
-    //   if (event.target.value == Number(event.target.value)) {
-    //     setValue(
-    //       event.target.value === "" ? 0 : Number(event.target.value),
-    //       pId,
-    //       type
-    //     );
-    //   } else if (event.target.value === "") setValue(0, pId, type);
-    //   else if (event.target.value < min) setValue(min, pId, type);
-    //   else if (event.target.value > max) setValue(max, pId, type);
-    // };
     let nextVal = event.target.value === "" ? 0 : Number(event.target.value);
     if (nextVal < min) nextVal = min;
     else if (nextVal > max) nextVal = max;
     setValue(Number(nextVal), pId, type);
   };
-
+  // Dont think this is necessary:
   // const handleBlur = (event) => {
   //   console.log(`event: ${event}, \nevent.target.value: ${event.target.value}`);
   //   if (event.target.value === "") setValue(0, pId, type);
