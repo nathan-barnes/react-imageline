@@ -3,7 +3,6 @@ import {asyncGetIp, getDate, makeid, asyncToString, boolToInt} from './Logging-U
 
 const firebase = window.firebase;
 
-
 var firebaseConfig = {
     apiKey: "AIzaSyCSWFQ3ESqg88tqLefSLJNVb4lT3ydjgmI",
     authDomain: "imagelines-lwc-00.firebaseapp.com",
@@ -17,9 +16,23 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+//fix for Json replace variables
+let counter = 0
+
+
+//sudo unique ID for session
+const uniquId =  makeid(20);
+
+
+// Get a reference to the database service
+let database = firebase.database().ref(uniquId);
+database.push();
+
+
+
 
 function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
-    // var database = firebase.database().ref(id)
+    
 
     // get user IP address also added ip-address libary.
     const jsonUpdate = {};
@@ -34,22 +47,11 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
     };
 
     database.update(jsonUpdate);
-
     counter++;
+    
 };
 
 
-
-//sudo unique ID for session
-const uniquId =  makeid(20);
-
-
-// Get a reference to the database service
-let database = firebase.database().ref(uniquId);
-database.push();
-
-//fix for Json replace variables
-let counter = 0
 
 async function asyncLogParams(name, value) {
 
@@ -60,8 +62,8 @@ async function asyncLogParams(name, value) {
 
     let {ymdDate, timeStamp } = getDate();
     let valueCleaned = boolToInt(value);
-    console.log(valueCleaned);
-    userIp = '136-55-777-44'
+    // console.log(valueCleaned);
+    // userIp = '136-55-777-44'
 
     //setup Json string item in db
     const jsonSet = {};

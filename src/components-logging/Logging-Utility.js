@@ -43,22 +43,29 @@ async function asyncToString(string) {
 function boolToInt(value) {
     let goodValue = 0;
 
-    switch (value){
-        case "True":
-            goodValue = 1;
-            break
-        case "False":
-            goodValue = 0;
-            break
-        case true:
-            goodValue = 1;
-            break
-        case false:
-            goodValue = 0;
-            break
-        default:
-            goodValue = value;
-            break
+    console.log(typeof value);
+
+    if ( typeof value === "object"){
+        goodValue = 1;
+        
+    } else {
+        switch (value){
+            case "True":
+                goodValue = 1;
+                break
+            case "False":
+                goodValue = 0;
+                break
+            case true:
+                goodValue = 1;
+                break
+            case false:
+                goodValue = 0;
+                break
+            default:
+                goodValue = value;
+                break
+        }
     }
     return goodValue;
 }
