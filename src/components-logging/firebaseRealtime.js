@@ -16,6 +16,30 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+
+//Authentication
+firebase.auth().signInAnonymously()
+// .catch(function(error) {
+    // Handle Errors here.
+    // var errorCode = error.code;
+    // var errorMessage = error.message;
+    // console.log(errorCode, errorMessage);
+// });
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        var uid = user.uid;
+
+        // console.log(isAnonymous, uid);
+        // ...
+    } else {
+        // User is signed out.
+        // ...
+    }
+    });
+
 //fix for Json replace variables
 let counter = 0
 
