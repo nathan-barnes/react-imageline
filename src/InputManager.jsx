@@ -238,10 +238,12 @@ export default function InputManager(props) {
           className={classes.controls}
         >
           <p />
-          <Typography gutterBottom align="center">
-            <ZahnerLogo />
-            <strong>{"  ImageLines"}</strong>
-          </Typography>
+          <div style={{ marginTop: 15 }}>
+            <Typography gutterBottom align="center" variant="body1">
+              <ZahnerLogo />
+              {"  ImageLines"}
+            </Typography>
+          </div>
           <ControlledAccordions accordionGroups={accordionGroups} />
         </Paper>
       </div>

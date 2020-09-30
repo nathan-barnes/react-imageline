@@ -27,14 +27,13 @@ export default function ScopeMenu(props) {
             icon={HeightIcon}
           />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <p />
-          <Typography align="center">
-            <a href={"https://www.azahner.com/contact/"}>Contact Us</a> to
-            customize <strong>ImageLines</strong> for specific dimensions or
+          <Typography align="center" variant="h6">
+            <a href={"https://www.azahner.com/contact/"}>Contact Us</a> to customize ImageLines for specific dimensions or
             conditions.
           </Typography>
-        </Grid>
+        </Grid> */}
         {/* <Grid item xs={12}>
           <FeedbackButtonToggle
             option1="Wall"

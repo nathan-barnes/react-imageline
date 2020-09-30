@@ -1,16 +1,17 @@
 import React from "react";
 import { ButtonGroup, Button } from "@material-ui/core";
-// import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 
-// const useStyles = makeStyles(() => ({
-//   root: {
-//     flexGrow: 5,
-//     flexBasis: 250,
-//   },
-// }));
+const useStyles = makeStyles(() => ({
+  root: {
+    // flexGrow: 5,
+    // flexBasis: 250,
+    variant: "h6",
+  },
+}));
 
 export default function FeedbackButtonToggle(props) {
-  // const classes = useStyles();
+  const classes = useStyles();
 
   const type = "bool";
   const { option1, option2, pId, disabled } = props;
@@ -38,6 +39,7 @@ export default function FeedbackButtonToggle(props) {
         onClick={!value ? handleToggle : () => {}}
         color={value ? "primary" : "secondary"}
         disabled={disable}
+        className="root"
       >
         {name1}
       </Button>
@@ -46,6 +48,7 @@ export default function FeedbackButtonToggle(props) {
         onClick={value ? handleToggle : () => {}}
         color={!value ? "primary" : "secondary"}
         disabled={disable}
+        className="root"
       >
         {name2}
       </Button>

@@ -13,8 +13,8 @@ export default function ZahnerLogo() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       // xmlns:xlink="http://www.w3.org/1999/xlink"
-      width="124px"
-      height="16px"
+      width="186px"
+      height="24px"
       viewBox="0 0 124 16"
       version="1.1"
       id="svg-replaced-0"

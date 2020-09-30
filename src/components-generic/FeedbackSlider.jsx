@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -10,7 +10,6 @@ const useStyles = makeStyles({
   // This is probably why the RWD isn't working - it overrides the RWD behavior (?)
   root: {
     minWidth: 200,
-
     // flexBasis: "75%",
     // flexGrow: 5,
     // flexBasis: 100,
@@ -39,7 +38,7 @@ export default function FeedbackSlider(props) {
   const min = props.min || 0;
   const max = props.max || min + 10;
   const step = props.step || 1;
-  const defValue = props.defVal || min;
+  const defValue = props.defVal === 0 ? 0 : props.defVal || min;
   const TheIcon = props.icon || BlankIcon;
   const disabled = props.disabled || false;
 
@@ -49,30 +48,41 @@ export default function FeedbackSlider(props) {
   // const [value, setValue] = React.useState(defValue);
   const { value, setValue, setDragValue } = props;
   const type = "range";
+  const [localVal, setLocalVal] = useState(defValue);
 
   const handleSliderDrag = props.handleSliderDrag
     ? props.handleSliderDrag
     : (event, newValue) => {
         setDragValue(newValue, pId, type);
+        setLocalVal(newValue);
       };
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue, pId, type);
+    setLocalVal(newValue);
   };
 
-  const handleInputChange = (event) => {
-    let nextVal = event.target.value === "" ? 0 : Number(event.target.value);
+  const sendUpdate = (newVal) => {
+    let nextVal = newVal === "" ? 0 : Number(newVal);
     if (nextVal < min) nextVal = min;
     else if (nextVal > max) nextVal = max;
     setValue(Number(nextVal), pId, type);
+    setLocalVal(Number(nextVal));
   };
-  // Dont think this is necessary:
-  // const handleBlur = (event) => {
-  //   console.log(`event: ${event}, \nevent.target.value: ${event.target.value}`);
-  //   if (event.target.value === "") setValue(0, pId, type);
-  //   else if (event.target.value < min) setValue(min, pId, type);
-  //   else if (event.target.value > max) setValue(max, pId, type);
-  // };
+
+  const handleBlur = (event) => {
+    let nextVal = event.target.value === "" ? 0 : Number(event.target.value);
+    sendUpdate(nextVal);
+  };
+
+  const handleKeyPress = (event) => {
+    console.log(`event.key: ${event.key}`);
+    if (event.key === "Enter") sendUpdate(localVal);
+  };
+
+  const handleInputChange = (event) => {
+    setLocalVal(event.target.value);
+  };
 
   return (
     <div className={classes.root}>
@@ -93,16 +103,16 @@ export default function FeedbackSlider(props) {
             onChangeCommitted={handleSliderChange}
             aria-labelledby="input-slider"
             disabled={disabled}
-            // className={classes.root}
           />
         </Grid>
         <Grid item>
           <Input
             className={classes.input}
-            value={value === "" ? 0 : Number(value) || 0}
+            value={localVal}
             margin="dense"
             onChange={handleInputChange}
-            // onBlur={handleBlur}
+            onKeyPress={handleKeyPress}
+            onBlur={handleBlur}
             inputProps={{
               step: step,
               min: min,

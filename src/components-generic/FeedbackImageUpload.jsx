@@ -1,21 +1,22 @@
 import React from "react";
-// import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
+import BackupIcon from "@material-ui/icons/Backup";
 
-// const useStyles = makeStyles((theme) => ({
-//   button: {
-//     //add button properties
-//     // width: 100,
-//     color: theme.primary
-//   },
-//   input: {
-//     //flex: 5,
-//     //any properties?  this doesn't show.
-//   },
-// }));
+const useStyles = makeStyles((theme) => ({
+  button: {
+    //add button properties
+    // width: 100,
+    color: theme.primary,
+    //   },
+    //   input: {
+    //     //flex: 5,
+    //     //any properties?  this doesn't show.
+  },
+}));
 
 export default function FeedbackImageUpload(props) {
-  // const classes = useStyles();
+  const classes = useStyles();
   const type = "file";
   const { pId, setValue } = props;
 
@@ -53,8 +54,9 @@ export default function FeedbackImageUpload(props) {
         <Button
           variant="contained"
           component="span"
-          color="primary"
-          // className={classes.button}
+          // color="primary"
+          className={classes.button}
+          startIcon={<BackupIcon />}
         >
           Upload Image
         </Button>

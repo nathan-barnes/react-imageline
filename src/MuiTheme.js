@@ -12,6 +12,9 @@ const theme = createMuiTheme({
     secondary: {
       main: grey[500],
     },
+    white: {
+      main: "#ffffff",
+    },
   },
   typography: {
     fontFamily: [

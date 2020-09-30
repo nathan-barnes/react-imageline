@@ -174,7 +174,7 @@ export default function ShapeDiverLoad(props) {
           scene: {
             show: true,
             gridVisibility: false,
-            groundPlaneVisibility: false,
+            groundPlaneVisibility: true,
             camera: {
               zoomExtentsFactor: 1, // Factor to apply to the bounding box before zooming to extents
               autoAdjust: false, // disable that the camera adjusts to geometry updates
@@ -208,6 +208,8 @@ export default function ShapeDiverLoad(props) {
         ]);
         setEditPaths(editGeoPaths);
 
+        const hideNow = getPaths(api, ["GroundPlane"]);
+
         // console.log(
         //   `JSON.stringify(editPaths.current): ${JSON.stringify(
         //     editPaths.current
@@ -230,7 +232,10 @@ export default function ShapeDiverLoad(props) {
         //   )}, ${previewGeoPaths}`
         // );
 
-        api.scene.toggleGeometry([...previewGeoPaths], [...editGeoPaths]);
+        api.scene.toggleGeometry(
+          [...previewGeoPaths],
+          [...editGeoPaths, ...hideNow]
+        );
       }
       loadApi().then(() => {
         api.scene.updateInteractionGroups(sphereGroup);
@@ -489,6 +494,10 @@ export default function ShapeDiverLoad(props) {
     if (reverse) toShow.reverse();
     sdApi.current.scene.toggleGeometry(...toShow);
     sdApi.current.scene.camera.zoomAsync(toShow[0]);
+    sdApi.current.updateSettingAsync(
+      "scene.groundPlaneVisibility",
+      editOn || reverse
+    );
   };
 
   const busySpinner = (event) => {
@@ -515,6 +524,18 @@ export default function ShapeDiverLoad(props) {
         alignContent="center"
         style={{ padding: 10 }}
       >
+        <Grid item xs={12}>
+          <LinearProgress
+            variant="determinate"
+            // size={30}
+            // style={{
+            //   // width: "96%",
+            //   right: 25,
+            // }}
+            value={progress * 100}
+            color={progress === 1 ? "secondary" : "primary"}
+          />
+        </Grid>
         <Grid item xs={12} md={8}>
           {/* <!-- ShapeDiver Viewer Main Container --> */}
           {liveLink ? (
@@ -556,49 +577,40 @@ export default function ShapeDiverLoad(props) {
                     // flex: 1,
                   }}
                 />
-              </Paper>
-              <div
-                style={{
-                  position: "relative",
-                  bottom: 600,
-                  left: 25,
-                  zIndex: 10,
-                  marginBottom: "-65px",
-                }}
-              >
-                <LinearProgress
-                  variant="determinate"
-                  // size={30}
+                <div
                   style={{
-                    // width: "96%",
-                    right: 25,
+                    position: "relative",
+                    bottom: 50,
+                    left: 25,
+                    zIndex: 10,
+                    marginBottom: "-65px",
+                    justifyContent: "right",
                   }}
-                  value={progress * 100}
-                  color={progress === 1 ? "secondary" : "primary"}
-                />
-                <UndoButton undoAndSync={undoAndSync} />
-                <RedoButton redoAndSync={redoAndSync} />{" "}
-                <TogglePerson
-                  sdApi={sdApi}
-                  personState={personState}
-                  setPersonState={setPersonState}
-                  editOn={editOn}
-                  updateViewState={updateViewState}
-                />
-                <ZoomExtents updateViewState={updateViewState} />
-                <ScreenCapButton sdApi={sdApi} />
-                <p />
-                {busyState ? (
-                  <CircularProgress
-                    variant="indeterminate"
-                    size={20}
-                    value={progress * 100}
-                    color={progress === 1 ? "secondary" : "primary"}
+                >
+                  <UndoButton undoAndSync={undoAndSync} />
+                  <RedoButton redoAndSync={redoAndSync} />{" "}
+                  <TogglePerson
+                    sdApi={sdApi}
+                    personState={personState}
+                    setPersonState={setPersonState}
+                    editOn={editOn}
+                    updateViewState={updateViewState}
                   />
-                ) : (
-                  <div />
-                )}
-              </div>
+                  <ZoomExtents updateViewState={updateViewState} />
+                  <ScreenCapButton sdApi={sdApi} />
+                  <p />
+                  {busyState ? (
+                    <CircularProgress
+                      variant="indeterminate"
+                      size={20}
+                      value={progress * 100}
+                      color={progress === 1 ? "secondary" : "primary"}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              </Paper>
             </div>
           ) : (
             <Card>
