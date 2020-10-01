@@ -1,8 +1,7 @@
 // import React from 'react';
-import {asyncGetIp, getDate, makeid, asyncToString} from './Logging-Utility'
+import {asyncGetIp, getDate, makeid, asyncToString, boolToInt} from './Logging-Utility'
 
 const firebase = window.firebase;
-
 
 var firebaseConfig = {
     apiKey: "AIzaSyCSWFQ3ESqg88tqLefSLJNVb4lT3ydjgmI",
@@ -18,8 +17,46 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 
+//Authentication
+firebase.auth().signInAnonymously()
+// .catch(function(error) {
+    // Handle Errors here.
+    // var errorCode = error.code;
+    // var errorMessage = error.message;
+    // console.log(errorCode, errorMessage);
+// });
+
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        var uid = user.uid;
+
+        // console.log(isAnonymous, uid);
+        // ...
+    } else {
+        // User is signed out.
+        // ...
+    }
+    });
+
+//fix for Json replace variables
+let counter = 0
+
+
+//sudo unique ID for session
+const uniquId =  makeid(20);
+
+
+// Get a reference to the database service
+let database = firebase.database().ref(uniquId);
+database.push();
+
+
+
+
 function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
-    // var database = firebase.database().ref(id)
+    
 
     // get user IP address also added ip-address libary.
     const jsonUpdate = {};
@@ -34,22 +71,11 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
     };
 
     database.update(jsonUpdate);
-
     counter++;
+    
 };
 
 
-
-//sudo unique ID for session
-const uniquId =  makeid(10);
-
-
-// Get a reference to the database service
-let database = firebase.database().ref(uniquId);
-database.push();
-
-//fix for Json replace variables
-let counter = 0
 
 async function asyncLogParams(name, value) {
 
@@ -59,9 +85,9 @@ async function asyncLogParams(name, value) {
     let userIp = await asyncToString(temp);
 
     let {ymdDate, timeStamp } = getDate();
-    
-
-    //userIp = '136-55-777-22'
+    let valueCleaned = boolToInt(value);
+    // console.log(valueCleaned);
+    // userIp = '136-55-777-44'
 
     //setup Json string item in db
     const jsonSet = {};
@@ -69,8 +95,8 @@ async function asyncLogParams(name, value) {
         jsonSet[counter]  = {
             "IP": '',
             "name": '',
-            "value": 0,
-            "Counter": 0,
+            "value": '',
+            "Counter": '',
             "Date": '',
             "timeStamp": ''
         };
@@ -79,7 +105,7 @@ async function asyncLogParams(name, value) {
     if(counter < 1) {database.set(jsonSet)};
 
     
-    logParamReal(name, value, userIp, ymdDate, timeStamp);
+    logParamReal(name, valueCleaned, userIp, ymdDate, timeStamp);
 }
 
 export default asyncLogParams;

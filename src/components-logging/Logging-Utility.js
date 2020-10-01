@@ -3,7 +3,7 @@
     
 function getDate() {
     const date = new Date();
-    const ymdDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    const ymdDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`;
     const hmsTime = `${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     const timeStamp = date.getTime();
 
@@ -40,4 +40,34 @@ async function asyncToString(string) {
     // return result;
 }
 
-export {asyncGetIp, getDate, makeid, asyncToString};
+function boolToInt(value) {
+    let goodValue = 0;
+
+    console.log(typeof value);
+
+    if ( typeof value === "object"){
+        goodValue = 1;
+        
+    } else {
+        switch (value){
+            case "True":
+                goodValue = 1;
+                break
+            case "False":
+                goodValue = 0;
+                break
+            case true:
+                goodValue = 1;
+                break
+            case false:
+                goodValue = 0;
+                break
+            default:
+                goodValue = value;
+                break
+        }
+    }
+    return goodValue;
+}
+
+export {asyncGetIp, getDate, makeid, asyncToString, boolToInt};
