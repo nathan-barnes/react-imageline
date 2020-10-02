@@ -8,6 +8,7 @@ import FeedbackSlider from "../components-generic/FeedbackSlider";
 
 import { getPaths, getCenterPivot } from "../SDHelpers";
 import { liveTransform } from "../LiveTransforms";
+import { DiceRoll, rollDice } from "../components-special/DiceRoll";
 
 export default function LinesMenu(props) {
   const {
@@ -19,6 +20,7 @@ export default function LinesMenu(props) {
     setDragValue,
     paramIds,
     editOn,
+    updatePoints,
   } = props;
   return (
     <div>
@@ -79,6 +81,7 @@ export default function LinesMenu(props) {
                 RESET LINES
               </Typography>
             </Button>
+            {/* <DiceRoll onClick={() => updatePoints(rollDice())} /> */}
           </Grid>
         </Grid>
       </Grid>

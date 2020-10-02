@@ -673,6 +673,7 @@ export default function ShapeDiverLoad(props) {
                   params={params}
                   // exports={exports}
                   resetPoints={resetPoints}
+                  updatePoints={updatePoints}
                   sdApi={sdApi}
                   toggleEditMode={toggleEditMode}
                   editOn={editOn}
