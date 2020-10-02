@@ -22,12 +22,8 @@ export default function LinesMenu(props) {
   } = props;
   return (
     <div>
-      <Grid
-        container
-        //   style={{ padding: 10 }}
-        spacing={2}
-      >
-        <Grid container>
+      <Grid container spacing={2}>
+        <Grid container style={{ paddingBottom: 15 }}>
           <Grid item xs={12}>
             <FeedbackSlider
               label={
@@ -65,7 +61,7 @@ export default function LinesMenu(props) {
           <Grid item xs={6} sm={6} md={12} lg={6}>
             <FeedbackButtonToggle
               option1="EDIT LINES"
-              option2="PREVIEW MODE"
+              option2="PREVIEW"
               value={editOn}
               handleToggle={() => {
                 toggleEditMode();

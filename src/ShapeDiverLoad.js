@@ -210,6 +210,9 @@ export default function ShapeDiverLoad(props) {
 
         const hideNow = getPaths(api, ["GroundPlane"]);
 
+        // asyncLogParams("viewerInit", 1);
+        asyncLogParams("ticket", props.ticket);
+
         // console.log(
         //   `JSON.stringify(editPaths.current): ${JSON.stringify(
         //     editPaths.current
@@ -465,7 +468,7 @@ export default function ShapeDiverLoad(props) {
     if (undoAction(sdApi)) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
-      asyncLogParams("Undo", 0);
+      asyncLogParams("Undo", 1);
     }
   };
 
@@ -673,6 +676,7 @@ export default function ShapeDiverLoad(props) {
                   sdApi={sdApi}
                   toggleEditMode={toggleEditMode}
                   editOn={editOn}
+                  getDataByName={getDataByName}
                   // paths={previewPaths}
                 />
               ) : (

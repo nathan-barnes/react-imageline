@@ -45,7 +45,13 @@ export default function InputManager(props) {
   const [paramIds, setParamIds] = useState({}); //replace with useRef()?
 
   // Adding SD link:
-  const { params, paramData, updateParams, updateParamNoSD } = props;
+  const {
+    params,
+    paramData,
+    updateParams,
+    updateParamNoSD,
+    getDataByName,
+  } = props;
 
   // console.log(
   //   `From parent: \nparams: ${params}\n\nparamData: ${paramData}\n\nupdateParams: ${updateParams}`
@@ -155,7 +161,11 @@ export default function InputManager(props) {
     {
       heading: "Image",
       subHeading:
-        (params[paramIds["Image: Input"]] || "Upload an Image") +
+        (params[paramIds["Image: Input"]]
+          ? params[paramIds["Image: Input"]].includes("6979ba4a")
+            ? "Marcel Breuer" //workaround to display name of picture loaded in ShapeDiver on initial load.
+            : params[paramIds["Image: Input"]]
+          : "Upload an Image") +
         ` / ${
           params[paramIds["Image: Invert Sampling"]] ? "Inverted" : "Original"
         } / ${
@@ -189,6 +199,8 @@ export default function InputManager(props) {
         " Max Perforations/ft @ " +
         (getValue("Lines: Stroke%ofMax") > -1 ? "+" : "") +
         getValue("Lines: Stroke%ofMax") +
+        "% = " +
+        getDataByName("openness") +
         "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
       // disabled: params[paramIds["Waves: EditModeOn"]],
