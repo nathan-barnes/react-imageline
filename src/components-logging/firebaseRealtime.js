@@ -55,7 +55,7 @@ database.push();
 
 
 
-function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
+function logParamReal(name, value, userIp, todaysDatey, TimeStamp, DataOutputs) {
     
 
     // get user IP address also added ip-address libary.
@@ -67,7 +67,8 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
         "value": value,
         "Counter": counter,
         "Date": todaysDatey,
-        "timeStamp": TimeStamp
+        "timeStamp": TimeStamp,
+        "DataOutputs": DataOutputs
     };
 
     database.update(jsonUpdate);
@@ -77,7 +78,7 @@ function logParamReal(name, value, userIp, todaysDatey, TimeStamp ) {
 
 
 
-async function asyncLogParams(name, value) {
+async function asyncLogParams(name, value, DataOutputs = '') {
 
 
     //get user IP and format to nice string
@@ -98,14 +99,15 @@ async function asyncLogParams(name, value) {
             "value": '',
             "Counter": '',
             "Date": '',
-            "timeStamp": ''
+            "timeStamp": '',
+            "DataOutputs":''
         };
 
     // //initialize this user
     if(counter < 1) {database.set(jsonSet)};
 
     
-    logParamReal(name, valueCleaned, userIp, ymdDate, timeStamp);
+    logParamReal(name, valueCleaned, userIp, ymdDate, timeStamp, DataOutputs);
 }
 
 export default asyncLogParams;

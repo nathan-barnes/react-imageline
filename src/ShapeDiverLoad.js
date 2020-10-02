@@ -388,7 +388,7 @@ export default function ShapeDiverLoad(props) {
         name: "Points",
         value: JSON.stringify({ points: pts }),
       })
-      .then(asyncLogParams("Points", 1));
+      .then(asyncLogParams("Points", 1, JSON.stringify({ points: pts })));
     updateViewState(true);
     // .then(updateViewState(true));
   }
@@ -460,7 +460,7 @@ export default function ShapeDiverLoad(props) {
     if (undoAction(sdApi)) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
-      asyncLogParams("Undo", 0);
+      asyncLogParams("Undo", -1);
     }
   };
 
