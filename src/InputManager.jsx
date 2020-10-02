@@ -81,6 +81,7 @@ export default function InputManager(props) {
     "EmailSubject",
     "EmailBody",
     "Waves: EditModeOn",
+    "Image: Contrast",
   ];
 
   // hen search for the names in the array from Shapediver, and return an array of objects with and name and id. this will remain static
