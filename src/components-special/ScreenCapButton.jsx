@@ -15,7 +15,7 @@ export default function ScreenCapButton(props) {
     link.download = "Zahner-ImageLines";
     link.href = imageURI;
     link.click();
-    asyncLogParams("CaptureDownload", 1);
+    asyncLogParams("CaptureDownload", imageURI);
   };
 
   return (
