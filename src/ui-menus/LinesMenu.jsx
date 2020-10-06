@@ -34,6 +34,7 @@ export default function LinesMenu(props) {
               }
               icon={Waves}
               {...getProps("Lines: Per Ft")}
+              max={6}
             />
           </Grid>
           <Grid item xs={12}>

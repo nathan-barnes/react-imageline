@@ -270,6 +270,13 @@ export default function ShapeDiverLoad(props) {
         // api.scene.camera.zoomAsync(previewPaths);
         api.state.addEventListener(api.state.EVENTTYPE.BUSY, busySpinner);
         api.state.addEventListener(api.state.EVENTTYPE.IDLE, busySpinner);
+        api.state.addEventListener(api.state.EVENTTYPE.MESSAGE, (event) => {
+          console.log(`Message: ${JSON.stringify(event.message)}`);
+          handleTimeOut();
+        });
+        // api.state.addEventListener(api.state.EVENTTYPE.FAILED, (event) => {
+        //   console.log(`Message: ${JSON.stringify(event.message)}`);
+        // });
         api.state.addEventListener(
           api.parameters.EVENTTYPE.VALUE_UPDATE,
           sdValueUpdate
@@ -289,7 +296,14 @@ export default function ShapeDiverLoad(props) {
     // }
   };
 
-  // useCallback(
+  const handleTimeOut = () => {
+    // alert(
+    //   "Operation timed out.  Please reduce size and/or complexity of design."
+    // );
+    asyncLogParams("TimeOut", 1);
+    // undoAndSync();
+  };
+
   const updateParam = (value, id, type) => {
     setParams((prev) =>
       type === "file" ? { ...prev, [id]: value.name } : { ...prev, [id]: value }
