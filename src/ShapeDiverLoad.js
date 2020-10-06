@@ -59,6 +59,8 @@ export default function ShapeDiverLoad(props) {
   const [busyState, setBusyState] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const [sdData, setSdData] = useState({});
+
   //Adding Selectable Points:
   const sphereRefs = useRef([]);
   const sphPoints = useRef([]);
@@ -158,6 +160,7 @@ export default function ShapeDiverLoad(props) {
             setParamDefs(parameters);
             setParams(currentParams);
             setPIdNameList(pIdNamePairs);
+            setSdData(api.scene.getData().data[0]);
 
             sphPoints.current = JSON.parse(
               api.parameters.get({ name: "Points" }).data[0].value
@@ -267,11 +270,24 @@ export default function ShapeDiverLoad(props) {
         // api.scene.camera.zoomAsync(previewPaths);
         api.state.addEventListener(api.state.EVENTTYPE.BUSY, busySpinner);
         api.state.addEventListener(api.state.EVENTTYPE.IDLE, busySpinner);
+        api.state.addEventListener(
+          api.parameters.EVENTTYPE.VALUE_UPDATE,
+          sdValueUpdate
+        );
       });
     }
   }, []); //Empty Array here means this function will run once and will not update.
 
   // update Parameter functions
+
+  const sdValueUpdate = () => {
+    // try {
+    const dataUpdate = sdApi.current.scene.getData().data[0];
+    setSdData(dataUpdate);
+    // } catch (err) {
+    //   console.log("error: ", err);
+    // }
+  };
 
   // useCallback(
   const updateParam = (value, id, type) => {
@@ -282,6 +298,9 @@ export default function ShapeDiverLoad(props) {
     if (sdApi && sdApi.current) {
       sdApi.current.parameters
         .updateAsync({ id, value })
+        .then(function (response) {
+          console.log("Promise result: ", JSON.stringify(response));
+        })
         .then(asyncLogParams(pIdNameList[id], value));
       // .then(function (result) {
       updateViewState(true); //this could be used to target goemetry under different conditions - edit vs. preview geometry
@@ -419,10 +438,21 @@ export default function ShapeDiverLoad(props) {
   };
 
   const getDataByName = (dataName) => {
+    // console.log(
+    //   `dataname ${dataName}: sdApi.current.scene.getData(): ${JSON.stringify(
+    //     sdApi.current.scene.getData()
+    //   )} `
+    // );
     const dataObj = sdApi.current.scene.getData().data[0];
     // console.log("data: ", JSON.stringify(dataObj.data[dataName]));
     // console.log(`dataObj.data[${dataName}]: `, dataObj.data[dataName]);
-    return dataObj.data[dataName];
+    if (dataObj) return dataObj.data[dataName];
+    else {
+      // console.log(
+      //   `sdData.data[dataName]: ${JSON.stringify(sdData.data[dataName])}`
+      // );
+      return sdData.data[dataName];
+    }
   };
 
   const resetPoints = () => {

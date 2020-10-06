@@ -8,7 +8,8 @@ import FeedbackSlider from "../components-generic/FeedbackSlider";
 
 import { getPaths, getCenterPivot } from "../SDHelpers";
 import { liveTransform } from "../LiveTransforms";
-import { DiceRoll, rollDice } from "../components-special/DiceRoll";
+// import { DiceRoll, rollDice } from "../components-special/DiceRoll";
+// import ReorderIcon from "@material-ui/icons/Reorder";
 
 export default function LinesMenu(props) {
   const {
@@ -75,11 +76,9 @@ export default function LinesMenu(props) {
             <Button
               variant="contained"
               onClick={resetPoints}
-              styles={{ color: "white" }}
+              styles={{ color: "white", variant: "h6" }}
             >
-              <Typography color="primary" variant="h6">
-                RESET LINES
-              </Typography>
+              RESET LINES
             </Button>
             {/* <DiceRoll onClick={() => updatePoints(rollDice())} /> */}
           </Grid>
