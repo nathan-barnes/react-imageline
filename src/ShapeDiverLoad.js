@@ -574,11 +574,9 @@ export default function ShapeDiverLoad(props) {
         <Grid item xs={12}>
           <LinearProgress
             variant="determinate"
-            // size={30}
-            // style={{
-            //   // width: "96%",
-            //   right: 25,
-            // }}
+            style={{
+              height: 8,
+            }}
             value={progress * 100}
             color={progress === 1 ? "secondary" : "primary"}
           />
@@ -650,6 +648,7 @@ export default function ShapeDiverLoad(props) {
                     <CircularProgress
                       variant="indeterminate"
                       size={20}
+                      thickness={5}
                       value={progress * 100}
                       color={progress === 1 ? "secondary" : "primary"}
                     />
