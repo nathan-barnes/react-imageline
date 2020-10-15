@@ -640,8 +640,9 @@ export default function ShapeDiverLoad(props) {
                     setPersonState={setPersonState}
                     editOn={editOn}
                     updateViewState={updateViewState}
+                    asyncLogParams={asyncLogParams}
                   />
-                  <ZoomExtents updateViewState={updateViewState} />
+                  <ZoomExtents updateViewState={updateViewState} asyncLogParams={asyncLogParams} />
                   <ScreenCapButton sdApi={sdApi} />
                   <p />
                   {busyState ? (

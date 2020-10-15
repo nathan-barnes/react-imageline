@@ -8,6 +8,7 @@ import FeedbackSlider from "../components-generic/FeedbackSlider";
 
 import { getPaths, getCenterPivot } from "../SDHelpers";
 import { liveTransform } from "../LiveTransforms";
+import asyncLogParams from "../components-logging/firebaseRealtime";
 // import { DiceRoll, rollDice } from "../components-special/DiceRoll";
 // import ReorderIcon from "@material-ui/icons/Reorder";
 
@@ -69,6 +70,7 @@ export default function LinesMenu(props) {
               value={editOn}
               handleToggle={() => {
                 toggleEditMode();
+                asyncLogParams("Edit/Preview", editOn, editOn?"off":"on")
               }}
             />
           </Grid>

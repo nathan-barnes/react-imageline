@@ -27,6 +27,7 @@ export function TogglePerson(props) {
         // console.log("no person to toggle", err);
       }
       setPersonState(!personState);
+      props.asyncLogParams("Person",!personState,"")
     }
   };
 
