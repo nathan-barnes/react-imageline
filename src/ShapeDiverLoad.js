@@ -133,7 +133,7 @@ export default function ShapeDiverLoad(props) {
           //   "https://pbs.twimg.com/profile_images/864982129104625667/awrS6KR1_400x400.jpg",
         });
 
-        console.log("ShapeDiver CommPlugin successfully loaded");
+        // console.log("ShapeDiver CommPlugin successfully loaded");
 
         api.scene.addEventListener(
           api.scene.EVENTTYPE.VISIBILITY_ON,
@@ -271,7 +271,7 @@ export default function ShapeDiverLoad(props) {
         api.state.addEventListener(api.state.EVENTTYPE.BUSY, busySpinner);
         api.state.addEventListener(api.state.EVENTTYPE.IDLE, busySpinner);
         api.state.addEventListener(api.state.EVENTTYPE.MESSAGE, (event) => {
-          console.log(`Message: ${JSON.stringify(event.message)}`);
+          // console.log(`Message: ${JSON.stringify(event.message)}`);
           handleTimeOut();
         });
         // api.state.addEventListener(api.state.EVENTTYPE.FAILED, (event) => {
@@ -313,7 +313,7 @@ export default function ShapeDiverLoad(props) {
       sdApi.current.parameters
         .updateAsync({ id, value })
         .then(function (response) {
-          console.log("Promise result: ", JSON.stringify(response));
+          // console.log("Promise result: ", JSON.stringify(response));
         })
         .then(asyncLogParams(pIdNameList[id], value));
       // .then(function (result) {
