@@ -28,7 +28,7 @@ function makeid(length) {
     let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+       result += getDate().timeStamp + characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
  }
@@ -43,7 +43,7 @@ async function asyncToString(string) {
 function boolToInt(value) {
     let goodValue = 0;
 
-    console.log(typeof value);
+    // console.log(typeof value);
 
     if ( typeof value === "object"){
         goodValue = 1;

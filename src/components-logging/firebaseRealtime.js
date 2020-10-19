@@ -45,7 +45,7 @@ let counter = 0
 
 
 //sudo unique ID for session
-const uniquId =  makeid(20);
+const uniquId =  makeid(10);
 //I think this might need to be generated as a state variable.  Maybe with UseRef() and UseEffect to run the operation once?  
 // Don't know for certain since it seems to work, 
 // but at the same time, i'm not sure how to place it so that it's accessible for console logging or as a hidden variable. 
