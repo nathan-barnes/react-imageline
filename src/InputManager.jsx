@@ -162,7 +162,7 @@ export default function InputManager(props) {
       heading: "Image",
       subHeading:
         (params[paramIds["Image: Input"]]
-          ? params[paramIds["Image: Input"]].includes("7d9d8a01")
+          ? params[paramIds["Image: Input"]].includes("6979ba4a") //7d9d8a01")
             ? "Marcel Breuer" //workaround to display name of picture loaded in ShapeDiver on initial load.
             : params[paramIds["Image: Input"]]
           : "Upload an Image") +
