@@ -28,9 +28,9 @@ function makeid(length) {
     let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
-       result += getDate().timeStamp + characters.charAt(Math.floor(Math.random() * charactersLength));
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    return result;
+    return getDate().timeStamp + result;
  }
 
  //helper functions for fixing strings for database

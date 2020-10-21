@@ -32,7 +32,7 @@ export function getApiValues(sdApi, params) {
 export function UndoButton(props) {
   return (
     <Tooltip title="Undo" arrow>
-      <IconButton aria-label="Undo" onClick={props.undoAndSync}>
+      <IconButton aria-label="Undo" onClick={props.undoAndSync} color={props.timedOut? "primary": "default"}>
         <Undo />
       </IconButton>
     </Tooltip>

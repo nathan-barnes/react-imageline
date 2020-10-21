@@ -10,6 +10,7 @@ import {
   // Typography,
   CircularProgress,
   LinearProgress,
+  responsiveFontSizes,
 } from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
@@ -60,6 +61,8 @@ export default function ShapeDiverLoad(props) {
   const [progress, setProgress] = useState(0);
 
   const [sdData, setSdData] = useState({});
+
+  const [timedOut, setTimedOut] = useState(false);
 
   //Adding Selectable Points:
   const sphereRefs = useRef([]);
@@ -300,7 +303,7 @@ export default function ShapeDiverLoad(props) {
     // alert(
     //   "Operation timed out.  Please reduce size and/or complexity of design."
     // );
-    asyncLogParams("TimeOut", 1);
+    asyncLogParams("TimeOut", 1).then(()=>{setTimedOut(true);});
     // undoAndSync();
   };
 
@@ -314,6 +317,11 @@ export default function ShapeDiverLoad(props) {
         .updateAsync({ id, value })
         .then(function (response) {
           // console.log("Promise result: ", JSON.stringify(response));
+          if (response["data"]) {
+            setTimedOut(false); 
+            // updateViewState(true);
+          }
+          // else setTimedOut(true);
         })
         .then(asyncLogParams(pIdNameList[id], value));
       // .then(function (result) {
@@ -429,6 +437,7 @@ export default function ShapeDiverLoad(props) {
         name: "Points",
         value: JSON.stringify({ points: pts }),
       })
+      .then((response)=>{if (response["data"]) setTimedOut(false);})
       .then(asyncLogParams("Points", 1, JSON.stringify({ points: pts })));
     updateViewState(true);
     // .then(updateViewState(true));
@@ -513,6 +522,7 @@ export default function ShapeDiverLoad(props) {
       const newParams = getApiValues(sdApi, params);
       setParams((prev) => ({ ...newParams }));
       asyncLogParams("Undo", -1);
+      setTimedOut(false); //This isn't quite right - sometimes an undo won't fix a timeOut
     }
   };
 
@@ -632,7 +642,7 @@ export default function ShapeDiverLoad(props) {
                     justifyContent: "right",
                   }}
                 >
-                  <UndoButton undoAndSync={undoAndSync} />
+                  <UndoButton undoAndSync={undoAndSync} timedOut={timedOut}/>
                   <RedoButton redoAndSync={redoAndSync} />{" "}
                   <TogglePerson
                     sdApi={sdApi}
@@ -664,7 +674,7 @@ export default function ShapeDiverLoad(props) {
               <div
                 style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
               >
-                <UndoButton undoAndSync={undoAndSync} />
+                <UndoButton undoAndSync={undoAndSync} timedOut={timedOut}/>
                 <RedoButton redoAndSync={redoAndSync} />
                 <TogglePerson
                   sdApi={sdApi}
