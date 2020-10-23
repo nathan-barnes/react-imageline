@@ -426,11 +426,12 @@ export default function ShapeDiverLoad(props) {
     tempPts.splice(selectedSph - 1, 1, [tPos.x, tPos.y, tPos.z]);
     // console.log("drag tempPts spliced: ", tempPts);
 
-    updatePoints(tempPts);
+    updatePoints(tempPts, "move");
   };
 
-  function updatePoints(pts) {
+  function updatePoints(pts,logName) {
     sphPoints.current = pts;
+    const logType = logName ? "Points-" + logName: "Points"
     // console.log("pts to update: ", JSON.stringify(pts));
     sdApi.current.parameters
       .updateAsync({
@@ -438,7 +439,7 @@ export default function ShapeDiverLoad(props) {
         value: JSON.stringify({ points: pts }),
       })
       .then((response)=>{if (response["data"]) setTimedOut(false);})
-      .then(asyncLogParams("Points", 1, JSON.stringify({ points: pts })));
+      .then(asyncLogParams(logType, 1, JSON.stringify({ points: pts })));
     updateViewState(true);
     // .then(updateViewState(true));
   }
@@ -490,7 +491,7 @@ export default function ShapeDiverLoad(props) {
       [0, 0.666667, 0],
       [0, 1, 0],
     ];
-    updatePoints(sphPoints.current);
+    updatePoints(sphPoints.current, "reset");
   };
 
   /* 

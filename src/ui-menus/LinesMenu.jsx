@@ -79,7 +79,7 @@ export default function LinesMenu(props) {
           <Grid item xs={6} sm={6} md={6} lg={6} >
           <Button
               variant="contained"
-              onClick={() =>{updatePoints(rollDice())}}
+              onClick={() =>{updatePoints(rollDice(), "random")}}
               styles={{ color: "white", variant: "h6" }}
               startIcon={<CasinoIcon />}
                             // key="Random"
