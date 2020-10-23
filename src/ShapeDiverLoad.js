@@ -54,7 +54,7 @@ export default function ShapeDiverLoad(props) {
   const [editPaths, setEditPaths] = useState([]);
   const [previewPaths, setPreviewPaths] = useState([]);
 
-  const [editOn, setEditOn] = useState(false);
+  const [editOn, setEditOn] = useState(true);
   const [personState, setPersonState] = useState(true);
 
   const [busyState, setBusyState] = useState(false);
@@ -534,26 +534,31 @@ export default function ShapeDiverLoad(props) {
     }
   };
 
-  const toggleEditMode = () => {
-    setEditOn(!editOn);
+  const toggleEditMode = (override) => {
+    if(override != editOn) {
+      setEditOn(override);
+    // setEditOn(!editOn);
     // console.log(`editOn.toString(): ${editOn.toString()}`);
     // console.log(`previewPaths: ${previewPaths}`);
-    updateViewState();
+    // updateViewState();
+    }
   };
+
+  const updateViewOnChange = useEffect(()=>{updateViewState()},[editOn])
 
   const updateViewState = (reverse) => {
     //maybe useCallback and memo-ize?
     const previewPathsSelected = personState ? previewPaths : [previewPaths[1]];
     // console.log(`previewPaths: ${previewPaths}`);
-    const toShow = !editOn
-      ? [editPaths, previewPathsSelected]
-      : [previewPathsSelected, editPaths];
-    if (reverse) toShow.reverse();
+    const toShow = editOn
+      ? [previewPathsSelected, editPaths]
+      : [editPaths, previewPathsSelected];
+    // if (reverse) toShow.reverse();
     sdApi.current.scene.toggleGeometry(...toShow);
     sdApi.current.scene.camera.zoomAsync(toShow[0]);
     sdApi.current.updateSettingAsync(
       "scene.groundPlaneVisibility",
-      editOn || reverse
+      editOn 
     );
   };
 

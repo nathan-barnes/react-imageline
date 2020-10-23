@@ -162,7 +162,7 @@ export default function InputManager(props) {
       heading: "Image",
       subHeading:
         (params[paramIds["Image: Input"]]
-          ? params[paramIds["Image: Input"]].includes("6979ba4a") //7d9d8a01")
+          ? params[paramIds["Image: Input"]].includes("11d3368d") //6979ba4a")
             ? "Marcel Breuer" //workaround to display name of picture loaded in ShapeDiver on initial load.
             : params[paramIds["Image: Input"]]
           : "Upload an Image") +
@@ -172,6 +172,7 @@ export default function InputManager(props) {
           params[paramIds["Image: Crop/Stretch"]] ? "Stretched" : "Cropped"
         }`,
       children: <ImageMenu getProps={getProps} />,
+      editMode: true
     },
 
     {
@@ -190,7 +191,8 @@ export default function InputManager(props) {
           getValue={getValue}
           setDragValue={updateParamNoSD}
         />
-      ),
+        ),
+       editMode: false,
     },
     {
       heading: "Perforations",
@@ -204,6 +206,7 @@ export default function InputManager(props) {
         "% Open",
       children: <PerfMenu getProps={getProps} getValue={getValue} />,
       // disabled: params[paramIds["Waves: EditModeOn"]],
+      editMode: true
     },
     {
       heading: "Scope",
@@ -215,6 +218,7 @@ export default function InputManager(props) {
       //  +
       // (bool1 ? "Wall" : "Ceiling"),
       children: <ScopeMenu getProps={getProps} getValue={getValue} />,
+      editMode: true
     },
     // {
     //   heading: "Test",
@@ -257,7 +261,7 @@ export default function InputManager(props) {
               {"  ImageLines"}
             </Typography>
           </div>
-          <ControlledAccordions accordionGroups={accordionGroups} />
+          <ControlledAccordions accordionGroups={accordionGroups} toggleEditMode={props.toggleEditMode}/>
         </Paper>
       </div>
     </div>

@@ -32,8 +32,9 @@ export default function ControlledAccordions(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState("panel0"); //Change this to set the open panel when the app loads.
 
-  const handleChange = (panel) => (event, isExpanded) => {
+  const handleChange = (panel, editMode) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
+    props.toggleEditMode(isExpanded ? editMode : true);
   };
   const { accordionGroups } = props;
 
@@ -46,7 +47,7 @@ export default function ControlledAccordions(props) {
       accordionArray.push(
         <Accordion
           expanded={expanded === "panel" + i}
-          onChange={handleChange("panel" + i)}
+          onChange={ handleChange("panel" + i, group.editMode)}
           key={"accordion" + i}
           disabled={group.disabled || false}
         >

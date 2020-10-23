@@ -9,7 +9,9 @@ import FeedbackSlider from "../components-generic/FeedbackSlider";
 import { getPaths, getCenterPivot } from "../SDHelpers";
 import { liveTransform } from "../LiveTransforms";
 import asyncLogParams from "../components-logging/firebaseRealtime";
-// import { DiceRoll, rollDice } from "../components-special/DiceRoll";
+import { DiceRoll, rollDice } from "../components-special/DiceRoll";
+import CasinoIcon from "@material-ui/icons/Casino";
+import LinearScaleIcon from "@material-ui/icons/LinearScale";
 // import ReorderIcon from "@material-ui/icons/Reorder";
 
 export default function LinesMenu(props) {
@@ -63,7 +65,7 @@ export default function LinesMenu(props) {
           </Grid>
         </Grid>
         <Grid container spacing={2} direction="row-reverse">
-          <Grid item xs={6} sm={6} md={12} lg={6}>
+          {/* <Grid item xs={6} sm={6} md={12} lg={6}>
             <FeedbackButtonToggle
               option1="EDIT LINES"
               option2="PREVIEW"
@@ -73,15 +75,28 @@ export default function LinesMenu(props) {
                 asyncLogParams("Edit/Preview", editOn, editOn?"off":"on")
               }}
             />
+          </Grid> */}
+          <Grid item xs={6} sm={6} md={6} lg={6} >
+          <Button
+              variant="contained"
+              onClick={() =>{updatePoints(rollDice())}}
+              styles={{ color: "white", variant: "h6" }}
+              startIcon={<CasinoIcon />}
+                            // key="Random"
+            >
+              RANDOM
+            </Button>
+            {/* <DiceRoll onClick={() => updatePoints(rollDice())} /> */}
           </Grid>
-
-          <Grid item xs={6} sm={6} md={12} lg={6}>
+          <Grid item xs={6} sm={6} md={6} lg={6} >
             <Button
               variant="contained"
               onClick={resetPoints}
               styles={{ color: "white", variant: "h6" }}
+              key="Reset"
+              startIcon={<LinearScaleIcon />}
             >
-              RESET LINES
+              RESET
             </Button>
             {/* <DiceRoll onClick={() => updatePoints(rollDice())} /> */}
           </Grid>

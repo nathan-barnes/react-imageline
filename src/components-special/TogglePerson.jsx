@@ -17,7 +17,7 @@ export function TogglePerson(props) {
   const editOn = props.editOn;
 
   const togglePerson = () => {
-    if (!editOn) {
+    if (editOn) {
       try {
         const toShow = !personState
           ? [[getPerson(sdApi)], []]
@@ -33,7 +33,7 @@ export function TogglePerson(props) {
 
   return (
     <IconButton onClick={togglePerson}>
-      {!personState || editOn ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
+      {!personState || !editOn ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
     </IconButton>
   );
 }

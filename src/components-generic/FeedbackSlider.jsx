@@ -76,7 +76,7 @@ export default function FeedbackSlider(props) {
   };
 
   const handleKeyPress = (event) => {
-    console.log(`event.key: ${event.key}`);
+    // console.log(`event.key: ${event.key}`);
     if (event.key === "Enter") sendUpdate(localVal);
   };
 
