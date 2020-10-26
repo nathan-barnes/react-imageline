@@ -11,6 +11,7 @@ import {
   CircularProgress,
   LinearProgress,
   responsiveFontSizes,
+  Button,
 } from "@material-ui/core";
 import InputManager from "./InputManager";
 // import ExportControl from "./ExportControl.jsx";
@@ -24,9 +25,10 @@ import {
   RedoButton,
 } from "./components-special/UndoRedo";
 import { TogglePerson } from "./components-special/TogglePerson";
-import ScreenCapButton from "./components-special/ScreenCapButton";
+import {ScreenCapButton, DownloadScreenCapButton} from "./components-special/ScreenCapButton";
 import { getPaths } from "./SDHelpers";
 import { ZoomExtents } from "./components-special/ZoomExtents";
+import CameraAltIcon from "@material-ui/icons/CameraAlt";
 
 // goal: Is it possible to load the API without loading a window?  Yes, using Backend api
 // goal: reference an outside component that controls a custom param control.  If that is declared, then a custom control panel will be created. If not, a generic one will be created.
@@ -654,12 +656,11 @@ export default function ShapeDiverLoad(props) {
                     sdApi={sdApi}
                     personState={personState}
                     setPersonState={setPersonState}
-                    editOn={editOn}
-                    updateViewState={updateViewState}
+                    editOn={editOn}                   
                     asyncLogParams={asyncLogParams}
                   />
                   <ZoomExtents updateViewState={updateViewState} asyncLogParams={asyncLogParams} />
-                  <ScreenCapButton sdApi={sdApi} />
+                  {/* <ScreenCapButton sdApi={sdApi} /> */}
                   <p />
                   {busyState ? (
                     <CircularProgress
@@ -677,9 +678,7 @@ export default function ShapeDiverLoad(props) {
             </div>
           ) : (
             <Card>
-              <div
-                style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}
-              >
+              <div style={{ position: "relative", top: 50, left: 20, zIndex: 4 }}>
                 <UndoButton undoAndSync={undoAndSync} timedOut={timedOut}/>
                 <RedoButton redoAndSync={redoAndSync} />
                 <TogglePerson
@@ -687,9 +686,8 @@ export default function ShapeDiverLoad(props) {
                   personState={personState}
                   setPersonState={setPersonState}
                   editOn={editOn}
-                  updateViewState={updateViewState}
                 />
-                <ScreenCapButton sdApi={sdApi} />
+                {/* <ScreenCapButton sdApi={sdApi} /> */}
               </div>
               <Paper
                 color="secondary"
@@ -721,31 +719,34 @@ export default function ShapeDiverLoad(props) {
             </Card>
           )}
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper style={{ height: 600 }} variant="outlined">
-            <div id="controls">
-              {canRenderParams ? (
-                <InputManager
-                  updateParams={updateParam}
-                  updateParamNoSD={updateParamNoSD}
-                  // exportRequest={exportRequest}
-                  paramData={paramDefs}
-                  params={params}
-                  // exports={exports}
-                  resetPoints={resetPoints}
-                  updatePoints={updatePoints}
-                  sdApi={sdApi}
-                  toggleEditMode={toggleEditMode}
-                  editOn={editOn}
-                  getDataByName={getDataByName}
-                  // paths={previewPaths}
-                />
-              ) : (
-                <div />
-              )}
-            </div>
-          </Paper>
-        </Grid>
+          <Grid item xs={12} md={4}>
+            <Paper style={{ height: 600 }} variant="outlined">
+              <div style={{ position: "relative", top: 550, left: 15, zIndex: 0 }}>
+                <DownloadScreenCapButton sdApi={sdApi}/>
+              </div>
+              <div id="controls" style={{ zIndex: 2, position:"relative", bottom: 36 }}>
+                {canRenderParams ? (
+                  <InputManager
+                    updateParams={updateParam}
+                    updateParamNoSD={updateParamNoSD}
+                    // exportRequest={exportRequest}
+                    paramData={paramDefs}
+                    params={params}
+                    // exports={exports}
+                    resetPoints={resetPoints}
+                    updatePoints={updatePoints}
+                    sdApi={sdApi}
+                    toggleEditMode={toggleEditMode}
+                    editOn={editOn}
+                    getDataByName={getDataByName}
+                    // paths={previewPaths}
+                  />
+                  ) : (
+              <div />
+                )}
+              </div>
+            </Paper>
+          </Grid>
         <Grid item xs={12}></Grid>
       </Grid>
     </div>

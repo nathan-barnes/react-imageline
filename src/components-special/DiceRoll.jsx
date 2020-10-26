@@ -18,9 +18,20 @@ export function rollDice() {
     [0, 1, 0],
   ];
 
+  var minL = 1, minR = 1;
   for (let i = 0; i < pts.length; i++) {
     const rand = Math.random() / 2;
-    pts[i][0] += i < 4 ? rand : -rand;
+if (i<4){
+  pts[i][0] += rand;
+  minL = rand < minL ? rand : minL;
+}
+else {
+  pts[i][0] += -rand;
+  minR = rand<minR? rand: minR;
+}
+  }
+  for (let i = 0; i< pts.length; i++){
+    pts[i][0] += i < 4 ? -minL: minR;
   }
   return pts;
 }
