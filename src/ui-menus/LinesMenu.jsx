@@ -44,6 +44,8 @@ export default function LinesMenu(props) {
             <FeedbackSlider
               label={"Rotation (degrees)"}
               {...getProps("Lines: Rotation")}
+              step={5}
+              
               icon={RotateRightIcon}
               handleSliderDrag={(event, newValue) => {
                 const rotationDegree = newValue - getValue("Lines: Rotation");

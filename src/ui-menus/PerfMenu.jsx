@@ -31,6 +31,7 @@ export default function PerfMenu(props) {
           <FeedbackSlider
             label={"Modify Openness"}
             {...getProps("Lines: Stroke%ofMax")}
+            step = {10}
             icon={ViewListIcon}
           />
         </Grid>
