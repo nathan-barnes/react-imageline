@@ -31,7 +31,7 @@ function BlankIcon(props) {
 /**
  *
  * @param {min, max, step, value, setValue} props
- * goal: add default icon or blank
+ * 
  */
 export default function FeedbackSlider(props) {
   const { label, pId } = props;
@@ -48,26 +48,23 @@ export default function FeedbackSlider(props) {
   // const [value, setValue] = React.useState(defValue);
   const { value, setValue, setDragValue } = props;
   const type = "range";
-  const [localVal, setLocalVal] = useState(defValue);
-
+  
   const handleSliderDrag = props.handleSliderDrag
     ? props.handleSliderDrag
     : (event, newValue) => {
         setDragValue(newValue, pId, type);
-        setLocalVal(newValue);
-      };
+    };
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue, pId, type);
-    setLocalVal(newValue);
   };
 
   const sendUpdate = (newVal) => {
     let nextVal = newVal === "" ? 0 : Number(newVal);
     if (nextVal < min) nextVal = min;
     else if (nextVal > max) nextVal = max;
+    else if (nextVal%step !=0) nextVal = Math.round(nextVal/step)*step; //fixes non-step number entry bug
     setValue(Number(nextVal), pId, type);
-    setLocalVal(Number(nextVal));
   };
 
   const handleBlur = (event) => {
@@ -77,11 +74,11 @@ export default function FeedbackSlider(props) {
 
   const handleKeyPress = (event) => {
     // console.log(`event.key: ${event.key}`);
-    if (event.key === "Enter") sendUpdate(localVal);
+    if (event.key === "Enter") sendUpdate(value);
   };
 
   const handleInputChange = (event) => {
-    setLocalVal(event.target.value);
+    setDragValue(event.target.value, pId, type)  //changed from setLocalVal to fix input field bug
   };
 
   return (
@@ -108,7 +105,7 @@ export default function FeedbackSlider(props) {
         <Grid item>
           <Input
             className={classes.input}
-            value={localVal}
+            value={value}
             margin="dense"
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
