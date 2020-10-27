@@ -198,7 +198,7 @@ export default function InputManager(props) {
       heading: "Perforations",
       subHeading:
         params[paramIds["Lines: Perf per Ft of Line"]] +
-        " Max Perforations/ft @ " +
+        " Perf/ft @ " +
         (getValue("Lines: Stroke%ofMax") > -1 ? "+" : "") +
         getValue("Lines: Stroke%ofMax") +
         "% = " +

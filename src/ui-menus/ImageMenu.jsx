@@ -19,7 +19,7 @@ export default function ImageMenu(props) {
         >
           <FeedbackImageUpload {...getProps("Image: Input")} />
         </Grid>
-        <Grid key={"stretch/crop"} item xs={6} sm={6} md={12} lg={6}>
+        <Grid key={"stretch/crop"} item xs={12} sm={6} md={12} lg={6}>
           <FeedbackButtonToggle
             option1="Stretch"
             option2="Crop"
@@ -27,7 +27,7 @@ export default function ImageMenu(props) {
           />
         </Grid>
         {/* </Grid> */}
-        <Grid key={"invertSampling"} item xs={6} sm={6} md={12} lg={6}>
+        <Grid key={"invertSampling"} item xs={12} sm={6} md={12} lg={6}>
           <FeedbackButtonToggle //Replace with Checkbox
             option1="Invert"
             option2="Original"

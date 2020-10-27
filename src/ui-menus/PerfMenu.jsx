@@ -22,7 +22,7 @@ export default function PerfMenu(props) {
       <Grid container>
         <Grid item xs={12}>
           <FeedbackSlider
-            label={"Max Perforations/ft"}
+            label={"Perforations/ft"}
             {...getProps("Lines: Perf per Ft of Line")}
             icon={GraphicEq}
           />

@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(15) + " !important",
     color: theme.palette.text.secondary,
     flexBasis: "66.6%",
-    flexShrink: 0,
+    flexShrink: 4,
     // alignContent: "center",
   },
 }));
