@@ -16,6 +16,8 @@ export default function ScopeMenu(props) {
             // key="Width"
             label="Width"
             {...getProps("Scope: Width")}
+            max={18}
+            defVal={18}
             icon={WidthIcon}
           />
         </Grid>
@@ -24,6 +26,7 @@ export default function ScopeMenu(props) {
             // key="Height"
             label="Height"
             {...getProps("Scope: Height")}
+            max={18}
             icon={HeightIcon}
           />
         </Grid>
